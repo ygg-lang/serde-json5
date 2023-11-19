@@ -15,9 +15,17 @@ class Object {
     '{' (ObjectPair (',' ObjectPair)* ',')? '}'
 }
 
-union ObjectPair {
-    | Identifier ':' Value  #IdentifierKey
-    | String ':' Value      #StringKey
+class ObjectPair {
+    ObjectKey COLON Value
+}
+
+token {
+    COLON: ':'
+}
+
+union ObjectKey {
+    | Identifier
+    | String
 }
 
 class Array {
@@ -25,7 +33,7 @@ class Array {
 }
 
 atomic class String {
-    | "'"  "'"
+    | '"' (StringEscaped | ANY) '"'
     | "'" (StringEscaped | ANY) "'"
 }
 
@@ -50,7 +58,7 @@ class Identifier {
     /[_\p{XID_start}][\p{XID_continue}]*/
 }
 
-atomic ignore class WhiteSpace {
+hide class WhiteSpace {
     // UNICODE_WHITE_SPACE
     ' ' | '\n' | '\r'
 }
