@@ -3,8 +3,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_cst;
 mod parse_ast;
+mod parse_cst;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
@@ -33,6 +33,7 @@ pub enum Json5Rule {
     Value,
     Object,
     ObjectPair,
+    COLON,
     ObjectKey,
     Array,
     String,
@@ -56,6 +57,7 @@ impl YggdrasilRule for Json5Rule {
             Self::Value => "",
             Self::Object => "",
             Self::ObjectPair => "",
+            Self::COLON => "",
             Self::ObjectKey => "",
             Self::Array => "",
             Self::String => "",
@@ -88,8 +90,14 @@ pub struct ObjectNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ObjectPairNode {
+    pub colon: ColonNode,
     pub object_key: ObjectKeyNode,
     pub value: ValueNode,
+    pub span: Range<usize>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ColonNode {
     pub span: Range<usize>,
 }
 #[derive(Clone, Debug, Hash)]
