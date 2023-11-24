@@ -37,7 +37,10 @@ pub enum Json5Rule {
     ObjectKey,
     Array,
     String,
-    StringEscaped,
+    StringElement,
+    HexDigit,
+    Escaped,
+    StringText,
     Number,
     Boolean,
     Null,
@@ -61,7 +64,10 @@ impl YggdrasilRule for Json5Rule {
             Self::ObjectKey => "",
             Self::Array => "",
             Self::String => "",
-            Self::StringEscaped => "",
+            Self::StringElement => "",
+            Self::HexDigit => "",
+            Self::Escaped => "",
+            Self::StringText => "",
             Self::Number => "",
             Self::Boolean => "",
             Self::Null => "",
@@ -115,12 +121,29 @@ pub struct ArrayNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StringNode {
-    pub string_escaped: Option<StringEscapedNode>,
+    pub string_element: Vec<StringElementNode>,
     pub span: Range<usize>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct StringEscapedNode {
+pub enum StringElementNode {
+    Escaped(EscapedNode),
+    HexDigit(HexDigitNode),
+    StringText(StringTextNode),
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct HexDigitNode {
+    pub span: Range<usize>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct EscapedNode {
+    pub span: Range<usize>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct StringTextNode {
     pub span: Range<usize>,
 }
 #[derive(Clone, Debug, Hash)]
