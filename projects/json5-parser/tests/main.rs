@@ -9,7 +9,7 @@ fn ready() {
 #[test]
 fn test_external() -> std::io::Result<()> {
     let mut store = FileCache::default();
-    let id = store.load_text("{\"a\": {\"b\": 1 2},  ", "test.json");
+    let id = store.load_text("{\"a\": 1, \" \n", "test.json");
     match parse(id, &mut store) {
         Ok(_) => {}
         Err(e) => e.as_report().eprint(&store)?,

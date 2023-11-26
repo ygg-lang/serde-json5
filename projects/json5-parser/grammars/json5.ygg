@@ -12,16 +12,11 @@ entry union Value {
 }
 
 class Object {
-    '{' (ObjectPair (',' ObjectPair)* ',')? '}'
+    '{' (ObjectPair (COMMA ObjectPair)* COMMA)? '}'
 }
 
 class ObjectPair {
     ObjectKey COLON Value
-}
-
-token {
-    COLON: ':'
-    COMMA: ','
 }
 
 union ObjectKey {
@@ -30,7 +25,7 @@ union ObjectKey {
 }
 
 class Array {
-    '[' (Value (',' Value)* ',')? ']'
+    '[' (Value (COMMA Value)* COMMA)? ']'
 }
 
 atomic class String {
@@ -69,6 +64,16 @@ class Null {
 
 class Identifier {
     /[_\p{XID_start}][\p{XID_continue}]*/
+}
+
+
+token {
+    COLON: ':'
+    COMMA: ','
+}
+
+hide class Comment {
+    | '#' ROL
 }
 
 hide class WhiteSpace {

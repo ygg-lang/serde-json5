@@ -5,7 +5,6 @@ pub(super) fn parse_cst(input: &str, rule: Json5Rule) -> OutputResult<Json5Rule>
         Json5Rule::Value => parse_value(state),
         Json5Rule::Object => parse_object(state),
         Json5Rule::ObjectPair => parse_object_pair(state),
-        Json5Rule::COLON => parse_colon(state),
         Json5Rule::ObjectKey => parse_object_key(state),
         Json5Rule::Array => parse_array(state),
         Json5Rule::String => parse_string(state),
@@ -17,6 +16,9 @@ pub(super) fn parse_cst(input: &str, rule: Json5Rule) -> OutputResult<Json5Rule>
         Json5Rule::Boolean => parse_boolean(state),
         Json5Rule::Null => parse_null(state),
         Json5Rule::Identifier => parse_identifier(state),
+        Json5Rule::COLON => parse_colon(state),
+        Json5Rule::COMMA => parse_comma(state),
+        Json5Rule::Comment => parse_comment(state),
         Json5Rule::WhiteSpace => parse_white_space(state),
         Json5Rule::HiddenText => unreachable!(),
     })
@@ -52,7 +54,7 @@ fn parse_object(state: Input) -> Output {
                                             Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
                                                 s.sequence(|s| {
                                                     Ok(s)
-                                                        .and_then(|s| builtin_text(s, ",", false))
+                                                        .and_then(|s| parse_comma(s).and_then(|s| s.tag_node("comma")))
                                                         .and_then(|s| builtin_ignore(s))
                                                         .and_then(|s| {
                                                             parse_object_pair(s).and_then(|s| s.tag_node("object_pair"))
@@ -63,7 +65,7 @@ fn parse_object(state: Input) -> Output {
                                     })
                                 })
                                 .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| builtin_text(s, ",", false))
+                                .and_then(|s| parse_comma(s).and_then(|s| s.tag_node("comma")))
                         })
                     })
                 })
@@ -84,10 +86,6 @@ fn parse_object_pair(state: Input) -> Output {
                 .and_then(|s| parse_value(s).and_then(|s| s.tag_node("value")))
         })
     })
-}
-#[inline]
-fn parse_colon(state: Input) -> Output {
-    state.rule(Json5Rule::COLON, |s| s.match_string(":", false))
 }
 #[inline]
 fn parse_object_key(state: Input) -> Output {
@@ -116,7 +114,7 @@ fn parse_array(state: Input) -> Output {
                                             Ok(s).and_then(|s| builtin_ignore(s)).and_then(|s| {
                                                 s.sequence(|s| {
                                                     Ok(s)
-                                                        .and_then(|s| builtin_text(s, ",", false))
+                                                        .and_then(|s| parse_comma(s).and_then(|s| s.tag_node("comma")))
                                                         .and_then(|s| builtin_ignore(s))
                                                         .and_then(|s| parse_value(s).and_then(|s| s.tag_node("value")))
                                                 })
@@ -125,7 +123,7 @@ fn parse_array(state: Input) -> Output {
                                     })
                                 })
                                 .and_then(|s| builtin_ignore(s))
-                                .and_then(|s| builtin_text(s, ",", false))
+                                .and_then(|s| parse_comma(s).and_then(|s| s.tag_node("comma")))
                         })
                     })
                 })
@@ -236,6 +234,20 @@ fn parse_identifier(state: Input) -> Output {
     })
 }
 #[inline]
+fn parse_colon(state: Input) -> Output {
+    state.rule(Json5Rule::COLON, |s| s.match_string(":", false))
+}
+#[inline]
+fn parse_comma(state: Input) -> Output {
+    state.rule(Json5Rule::COMMA, |s| s.match_string(",", false))
+}
+#[inline]
+fn parse_comment(state: Input) -> Output {
+    state.rule(Json5Rule::Comment, |s| {
+        s.sequence(|s| Ok(s).and_then(|s| builtin_text(s, "#", false)).and_then(|s| s.rest_of_line()))
+    })
+}
+#[inline]
 fn parse_white_space(state: Input) -> Output {
     state.rule(Json5Rule::WhiteSpace, |s| {
         Err(s)
@@ -247,7 +259,7 @@ fn parse_white_space(state: Input) -> Output {
 
 /// All rules ignored in ast mode, inline is not recommended
 fn builtin_ignore(state: Input) -> Output {
-    state.repeat(0..u32::MAX, |s| parse_white_space(s))
+    state.repeat(0..u32::MAX, |s| parse_comment(s).or_else(|s| parse_white_space(s)))
 }
 
 fn builtin_any(state: Input) -> Output {
