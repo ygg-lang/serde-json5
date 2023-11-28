@@ -2,7 +2,7 @@
 resolver = "2"
 members = ["projects/*"]
 default-members = [
-    "projects/build_by_cli",
+    "projects/json5-parser",
     "projects/build_by_dep",
 ]
 exclude = [
