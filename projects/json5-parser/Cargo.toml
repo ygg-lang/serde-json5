@@ -13,9 +13,10 @@ exclude = ["package.json", "tests/**"]
 
 [dependencies]
 yggdrasil-rt = "0.0.16"
+nyar-error = { version = "0.1.10", features = ["yggdrasil-rt"] }
 
 [dev-dependencies]
-nyar-error = "0.1.10"
+
 
 [features]
 default = []

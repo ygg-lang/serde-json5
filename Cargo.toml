@@ -3,7 +3,6 @@ resolver = "2"
 members = ["projects/*"]
 default-members = [
     "projects/json5-parser",
-    "projects/build_by_dep",
 ]
 exclude = [
     "projects/.DS_Store",
