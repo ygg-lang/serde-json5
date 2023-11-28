@@ -54,6 +54,7 @@ impl YggdrasilNode for ObjectNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
+            comma: pair.take_tagged_items::<CommaNode>(Cow::Borrowed("comma")).collect::<Result<Vec<_>, _>>()?,
             object_pair: pair
                 .take_tagged_items::<ObjectPairNode>(Cow::Borrowed("object_pair"))
                 .collect::<Result<Vec<_>, _>>()?,
@@ -95,26 +96,6 @@ impl FromStr for ObjectPairNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for ColonNode {
-    type Rule = Json5Rule;
-
-    fn get_range(&self) -> Range<usize> {
-        Range { start: self.span.start as usize, end: self.span.end as usize }
-    }
-    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
-        let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
-    }
-}
-#[automatically_derived]
-impl FromStr for ColonNode {
-    type Err = YggdrasilError<Json5Rule>;
-
-    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
-        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::COLON)?)
-    }
-}
-#[automatically_derived]
 impl YggdrasilNode for ObjectKeyNode {
     type Rule = Json5Rule;
 
@@ -153,6 +134,7 @@ impl YggdrasilNode for ArrayNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
+            comma: pair.take_tagged_items::<CommaNode>(Cow::Borrowed("comma")).collect::<Result<Vec<_>, _>>()?,
             value: pair.take_tagged_items::<ValueNode>(Cow::Borrowed("value")).collect::<Result<Vec<_>, _>>()?,
             span: Range { start: _span.start() as usize, end: _span.end() as usize },
         })
@@ -233,7 +215,7 @@ impl YggdrasilNode for HexDigitNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as usize, end: _span.end() as usize } })
     }
 }
 #[automatically_derived]
@@ -253,7 +235,7 @@ impl YggdrasilNode for EscapedNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as usize, end: _span.end() as usize } })
     }
 }
 #[automatically_derived]
@@ -273,7 +255,7 @@ impl YggdrasilNode for StringTextNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as usize, end: _span.end() as usize } })
     }
 }
 #[automatically_derived]
@@ -293,7 +275,7 @@ impl YggdrasilNode for NumberNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+        Ok(Self { text: pair.get_string(), span: Range { start: _span.start() as usize, end: _span.end() as usize } })
     }
 }
 #[automatically_derived]
@@ -371,6 +353,66 @@ impl FromStr for IdentifierNode {
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
         Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Identifier)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for ColonNode {
+    type Rule = Json5Rule;
+
+    fn get_range(&self) -> Range<usize> {
+        Range { start: self.span.start as usize, end: self.span.end as usize }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+    }
+}
+#[automatically_derived]
+impl FromStr for ColonNode {
+    type Err = YggdrasilError<Json5Rule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::COLON)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for CommaNode {
+    type Rule = Json5Rule;
+
+    fn get_range(&self) -> Range<usize> {
+        Range { start: self.span.start as usize, end: self.span.end as usize }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+    }
+}
+#[automatically_derived]
+impl FromStr for CommaNode {
+    type Err = YggdrasilError<Json5Rule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::COMMA)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for CommentNode {
+    type Rule = Json5Rule;
+
+    fn get_range(&self) -> Range<usize> {
+        Range { start: self.span.start as usize, end: self.span.end as usize }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+    }
+}
+#[automatically_derived]
+impl FromStr for CommentNode {
+    type Err = YggdrasilError<Json5Rule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Comment)?)
     }
 }
 #[automatically_derived]
