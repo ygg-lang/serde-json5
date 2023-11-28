@@ -1,0 +1,17 @@
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/projects/build_by_cli"
+    target-branch: "dev"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/projects/build_by_dep"
+    target-branch: "dev"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "dev"
+    schedule:
+      interval: "daily"
