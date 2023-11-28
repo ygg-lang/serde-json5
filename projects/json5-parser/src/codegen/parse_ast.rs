@@ -176,7 +176,9 @@ impl YggdrasilNode for StringNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            string_escaped: pair.take_tagged_option::<StringEscapedNode>(Cow::Borrowed("string_escaped")),
+            string_element: pair
+                .take_tagged_items::<StringElementNode>(Cow::Borrowed("string_element"))
+                .collect::<Result<Vec<_>, _>>()?,
             span: Range { start: _span.start() as usize, end: _span.end() as usize },
         })
     }
@@ -190,7 +192,40 @@ impl FromStr for StringNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for StringEscapedNode {
+impl YggdrasilNode for StringElementNode {
+    type Rule = Json5Rule;
+
+    fn get_range(&self) -> Range<usize> {
+        match self {
+            Self::Escaped(s) => s.get_range(),
+            Self::HexDigit(s) => s.get_range(),
+            Self::StringText(s) => s.get_range(),
+        }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        if let Ok(s) = pair.take_tagged_one::<EscapedNode>(Cow::Borrowed("escaped")) {
+            return Ok(Self::Escaped(s));
+        }
+        if let Ok(s) = pair.take_tagged_one::<HexDigitNode>(Cow::Borrowed("hex_digit")) {
+            return Ok(Self::HexDigit(s));
+        }
+        if let Ok(s) = pair.take_tagged_one::<StringTextNode>(Cow::Borrowed("string_text")) {
+            return Ok(Self::StringText(s));
+        }
+        Err(YggdrasilError::invalid_node(Json5Rule::StringElement, _span))
+    }
+}
+#[automatically_derived]
+impl FromStr for StringElementNode {
+    type Err = YggdrasilError<Json5Rule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::StringElement)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for HexDigitNode {
     type Rule = Json5Rule;
 
     fn get_range(&self) -> Range<usize> {
@@ -202,11 +237,51 @@ impl YggdrasilNode for StringEscapedNode {
     }
 }
 #[automatically_derived]
-impl FromStr for StringEscapedNode {
+impl FromStr for HexDigitNode {
     type Err = YggdrasilError<Json5Rule>;
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
-        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::StringEscaped)?)
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::HexDigit)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for EscapedNode {
+    type Rule = Json5Rule;
+
+    fn get_range(&self) -> Range<usize> {
+        Range { start: self.span.start as usize, end: self.span.end as usize }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+    }
+}
+#[automatically_derived]
+impl FromStr for EscapedNode {
+    type Err = YggdrasilError<Json5Rule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Escaped)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for StringTextNode {
+    type Rule = Json5Rule;
+
+    fn get_range(&self) -> Range<usize> {
+        Range { start: self.span.start as usize, end: self.span.end as usize }
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self { span: Range { start: _span.start() as usize, end: _span.end() as usize } })
+    }
+}
+#[automatically_derived]
+impl FromStr for StringTextNode {
+    type Err = YggdrasilError<Json5Rule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::StringText)?)
     }
 }
 #[automatically_derived]

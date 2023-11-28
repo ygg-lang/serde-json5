@@ -33,12 +33,24 @@ class Array {
 }
 
 atomic class String {
-    | '"' (StringEscaped | ANY) '"'
-    | "'" (StringEscaped | ANY) "'"
+    | '"' StringElement* '"'
+    | "'" StringElement* "'"
 }
 
-atomic class StringEscaped {
-    '\' ANY
+atomic union StringElement {
+    | '\' HexDigit #HexDigit
+    | '\' Escaped  #Escaped
+    | StringText   #StringText
+}
+
+class HexDigit {
+    /[0-9a-fA-F]{4}/
+}
+class Escaped {
+    ANY
+}
+class StringText {
+    /[^"'\\\\]+/
 }
 
 atomic class Number {
