@@ -12,7 +12,7 @@ edition = "2021"
 exclude = ["package.json", "tests/**"]
 
 [dependencies]
-yggdrasil-rt = "0.0.16"
+yggdrasil-rt = "0.1.1"
 nyar-error = { version = "0.1.10", features = ["yggdrasil-rt"] }
 
 [dev-dependencies]

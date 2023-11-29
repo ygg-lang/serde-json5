@@ -48,13 +48,26 @@ pub enum Json5Rule {
     COMMA,
     Comment,
     WhiteSpace,
+    StringElement0,
+    StringElement1,
+    Boolean0,
+    Boolean1,
     /// Label for unnamed text literal
     HiddenText,
 }
 
 impl YggdrasilRule for Json5Rule {
     fn is_ignore(&self) -> bool {
-        matches!(self, Self::HiddenText | Self::Comment | Self::WhiteSpace)
+        matches!(
+            self,
+            Self::HiddenText
+                | Self::Comment
+                | Self::WhiteSpace
+                | Self::StringElement0
+                | Self::StringElement1
+                | Self::Boolean0
+                | Self::Boolean1
+        )
     }
 
     fn get_style(&self) -> &'static str {
@@ -77,118 +90,130 @@ impl YggdrasilRule for Json5Rule {
             Self::COMMA => "",
             Self::Comment => "",
             Self::WhiteSpace => "",
+            Self::StringElement0 => "",
+            Self::StringElement1 => "",
+            Self::Boolean0 => "",
+            Self::Boolean1 => "",
             _ => "",
         }
     }
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum ValueNode {
-    Array(ArrayNode),
-    Boolean(BooleanNode),
-    Null(NullNode),
-    Number(NumberNode),
-    Object(ObjectNode),
-    String(StringNode),
+pub enum ValueNode<'i> {
+    Object(Box<ValueNode<'i>>),
+    Array(Box<ValueNode<'i>>),
+    String(Box<ValueNode<'i>>),
+    Number(Box<ValueNode<'i>>),
+    Boolean(Box<ValueNode<'i>>),
+    Null(Box<ValueNode<'i>>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ObjectNode {
-    pub comma: Vec<CommaNode>,
-    pub object_pair: Vec<ObjectPairNode>,
-    pub span: Range<usize>,
+pub struct ObjectNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ObjectPairNode {
-    pub colon: ColonNode,
-    pub object_key: ObjectKeyNode,
-    pub value: ValueNode,
-    pub span: Range<usize>,
+pub struct ObjectPairNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum ObjectKeyNode {
-    Identifier(IdentifierNode),
-    String(StringNode),
+pub enum ObjectKeyNode<'i> {
+    Identifier(IdentifierNode<'i>),
+    String(StringNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ArrayNode {
-    pub comma: Vec<CommaNode>,
-    pub value: Vec<ValueNode>,
-    pub span: Range<usize>,
+pub struct ArrayNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct StringNode {
-    pub string_element: Vec<StringElementNode>,
-    pub span: Range<usize>,
+pub struct StringNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum StringElementNode {
-    Escaped(EscapedNode),
-    HexDigit(HexDigitNode),
-    StringText(StringTextNode),
+pub enum StringElementNode<'i> {
+    HexDigit(StringElement0Node<'i>),
+    Escaped(StringElement1Node<'i>),
+    StringText(StringTextNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct HexDigitNode {
-    pub text: String,
-    pub span: Range<usize>,
+pub struct HexDigitNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct EscapedNode {
-    pub text: String,
-    pub span: Range<usize>,
+pub struct EscapedNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct StringTextNode {
-    pub text: String,
-    pub span: Range<usize>,
+pub struct StringTextNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct NumberNode {
-    pub text: String,
-    pub span: Range<usize>,
+pub struct NumberNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum BooleanNode {
-    False,
-    True,
+pub enum BooleanNode<'i> {
+    True(Boolean0Node<'i>),
+    False(Boolean1Node<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct NullNode {
-    pub span: Range<usize>,
+pub struct NullNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct IdentifierNode {
-    pub span: Range<usize>,
+pub struct IdentifierNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ColonNode {
-    pub span: Range<usize>,
+pub struct ColonNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct CommaNode {
-    pub span: Range<usize>,
+pub struct CommaNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct CommentNode {
-    pub span: Range<usize>,
+pub struct CommentNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct WhiteSpaceNode {
-    pub span: Range<usize>,
+pub struct WhiteSpaceNode<'i> {
+    pair: TokenPair<'i, Json5Rule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct StringElement0Node<'i> {
+    pair: TokenPair<'i, Json5Rule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct StringElement1Node<'i> {
+    pair: TokenPair<'i, Json5Rule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Boolean0Node<'i> {
+    pair: TokenPair<'i, Json5Rule>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Boolean1Node<'i> {
+    pair: TokenPair<'i, Json5Rule>,
 }

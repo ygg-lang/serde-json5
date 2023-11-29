@@ -8,30 +8,28 @@ GrammarInfo {
         "Value": GrammarRule {
             name: Identifier("Value", 57..62),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Union {
                 branches: [
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("Object", 80..86),
                         ),
                         branch: Expression {
-                            tag: Identifier("Object", 80..86),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("Object", 71..77),
@@ -40,12 +38,12 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("Array", 102..107),
                         ),
                         branch: Expression {
-                            tag: Identifier("Array", 102..107),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("Array", 93..98),
@@ -54,12 +52,12 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("String", 123..129),
                         ),
                         branch: Expression {
-                            tag: Identifier("String", 123..129),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("String", 114..120),
@@ -68,12 +66,12 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("Number", 145..151),
                         ),
                         branch: Expression {
-                            tag: Identifier("Number", 145..151),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("Number", 136..142),
@@ -82,12 +80,12 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("Boolean", 167..174),
                         ),
                         branch: Expression {
-                            tag: Identifier("Boolean", 167..174),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("Boolean", 158..165),
@@ -96,12 +94,12 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("Null", 190..194),
                         ),
                         branch: Expression {
-                            tag: Identifier("Null", 190..194),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("Null", 181..185),
@@ -111,27 +109,33 @@ GrammarInfo {
                         },
                     },
                 ],
+                refined: {
+                    "Object": "Value",
+                    "Array": "Value",
+                    "String": "Value",
+                    "Number": "Value",
+                    "Boolean": "Value",
+                    "Null": "Value",
+                },
             },
             range: 45..196,
         },
         "Object": GrammarRule {
             name: Identifier("Object", 204..210),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
@@ -284,21 +288,19 @@ GrammarInfo {
         "ObjectPair": GrammarRule {
             name: Identifier("ObjectPair", 274..284),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
@@ -352,30 +354,26 @@ GrammarInfo {
         "ObjectKey": GrammarRule {
             name: Identifier("ObjectKey", 322..331),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Union {
                 branches: [
-                    YggdrasilVariant {
-                        tag: Some(
-                            Identifier("Identifier", 340..350),
-                        ),
+                    YggdrasilBranch {
+                        tag: None,
                         branch: Expression {
-                            tag: Identifier("Identifier", 340..350),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("Identifier", 340..350),
@@ -384,12 +382,10 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
-                        tag: Some(
-                            Identifier("String", 357..363),
-                        ),
+                    YggdrasilBranch {
+                        tag: None,
                         branch: Expression {
-                            tag: Identifier("String", 357..363),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("String", 357..363),
@@ -399,27 +395,29 @@ GrammarInfo {
                         },
                     },
                 ],
+                refined: {
+                    "Identifier": "ObjectKey",
+                    "String": "ObjectKey",
+                },
             },
             range: 316..365,
         },
         "Array": GrammarRule {
             name: Identifier("Array", 373..378),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
@@ -572,21 +570,19 @@ GrammarInfo {
         "String": GrammarRule {
             name: Identifier("String", 439..445),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
@@ -701,30 +697,28 @@ GrammarInfo {
         "StringElement": GrammarRule {
             name: Identifier("StringElement", 522..535),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Union {
                 branches: [
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("HexDigit", 558..566),
                         ),
                         branch: Expression {
-                            tag: Identifier("HexDigit", 558..566),
+                            tag: None,
                             remark: false,
                             body: ConcatExpression {
                                 sequence: [
@@ -738,7 +732,7 @@ GrammarInfo {
                                         },
                                     },
                                     Expression {
-                                        tag: Identifier("HexDigit", 548..556),
+                                        tag: None,
                                         remark: false,
                                         body: RuleReference {
                                             name: Identifier("HexDigit", 548..556),
@@ -750,12 +744,12 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("Escaped", 587..594),
                         ),
                         branch: Expression {
-                            tag: Identifier("Escaped", 587..594),
+                            tag: None,
                             remark: false,
                             body: ConcatExpression {
                                 sequence: [
@@ -769,7 +763,7 @@ GrammarInfo {
                                         },
                                     },
                                     Expression {
-                                        tag: Identifier("Escaped", 577..584),
+                                        tag: None,
                                         remark: false,
                                         body: RuleReference {
                                             name: Identifier("Escaped", 577..584),
@@ -781,12 +775,12 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("StringText", 615..625),
                         ),
                         branch: Expression {
-                            tag: Identifier("StringText", 615..625),
+                            tag: None,
                             remark: false,
                             body: RuleReference {
                                 name: Identifier("StringText", 601..611),
@@ -796,34 +790,37 @@ GrammarInfo {
                         },
                     },
                 ],
+                refined: {
+                    "HexDigit": "StringElement0",
+                    "Escaped": "StringElement1",
+                    "StringText": "StringElement",
+                },
             },
             range: 509..627,
         },
         "HexDigit": GrammarRule {
             name: Identifier("HexDigit", 641..649),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: true,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "[0-9a-fA-F]{4}",
+                        raw: "/[0-9a-fA-F]{4}/",
                         span: 656..672,
                     },
                 },
@@ -833,21 +830,19 @@ GrammarInfo {
         "Escaped": GrammarRule {
             name: Identifier("Escaped", 686..693),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: true,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
@@ -861,28 +856,26 @@ GrammarInfo {
         "StringText": GrammarRule {
             name: Identifier("StringText", 717..727),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: true,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "[^\"'\\\\]+",
+                        raw: "/[^\"'\\\\\\\\]+/",
                         span: 734..746,
                     },
                 },
@@ -892,28 +885,26 @@ GrammarInfo {
         "Number": GrammarRule {
             name: Identifier("Number", 768..774),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: true,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "[+-]?(0|[1-9][0-9]*)",
+                        raw: "/[+-]?(0|[1-9][0-9]*)/",
                         span: 781..803,
                     },
                 },
@@ -923,30 +914,28 @@ GrammarInfo {
         "Boolean": GrammarRule {
             name: Identifier("Boolean", 813..820),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Union {
                 branches: [
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("True", 838..842),
                         ),
                         branch: Expression {
-                            tag: Identifier("True", 838..842),
+                            tag: None,
                             remark: false,
                             body: YggdrasilText {
                                 text: "true",
@@ -955,12 +944,12 @@ GrammarInfo {
                             },
                         },
                     },
-                    YggdrasilVariant {
+                    YggdrasilBranch {
                         tag: Some(
                             Identifier("False", 858..863),
                         ),
                         branch: Expression {
-                            tag: Identifier("False", 858..863),
+                            tag: None,
                             remark: false,
                             body: YggdrasilText {
                                 text: "false",
@@ -970,27 +959,29 @@ GrammarInfo {
                         },
                     },
                 ],
+                refined: {
+                    "True": "Boolean0",
+                    "False": "Boolean1",
+                },
             },
             range: 807..865,
         },
         "Null": GrammarRule {
             name: Identifier("Null", 873..877),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
@@ -1008,28 +999,26 @@ GrammarInfo {
         "Identifier": GrammarRule {
             name: Identifier("Identifier", 900..910),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
                     tag: None,
                     remark: false,
                     body: YggdrasilRegex {
-                        raw: "[_\\p{XID_start}][\\p{XID_continue}]*",
+                        raw: "/[_\\p{XID_start}][\\p{XID_continue}]*/",
                         span: 917..954,
                     },
                 },
@@ -1039,21 +1028,19 @@ GrammarInfo {
         "COLON": GrammarRule {
             name: Identifier("COLON", 971..976),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: false,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: false,
             },
             body: Class {
                 term: Expression {
@@ -1071,21 +1058,19 @@ GrammarInfo {
         "COMMA": GrammarRule {
             name: Identifier("COMMA", 986..991),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: false,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: false,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: false,
+                    styles: [],
+                    railway: true,
+                },
+                captures: false,
             },
             body: Class {
                 term: Expression {
@@ -1103,21 +1088,19 @@ GrammarInfo {
         "Comment": GrammarRule {
             name: Identifier("Comment", 1011..1018),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: true,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: true,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
@@ -1148,21 +1131,19 @@ GrammarInfo {
         "WhiteSpace": GrammarRule {
             name: Identifier("WhiteSpace", 1049..1059),
             redirect: None,
-            document: "",
-            derives: RuleDerive {
-                derives: {},
-            },
-            atomic: Optimized,
-            inline: false,
-            viewer: GrammarViewer {
-                hidden: true,
-                styles: [],
-                railway: true,
-            },
-            captures: GrammarCaptures {
-                text: false,
-                auto: true,
-                range: "usize",
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Optimized,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: true,
+                    styles: [],
+                    railway: true,
+                },
+                captures: true,
             },
             body: Class {
                 term: Expression {
@@ -1202,6 +1183,160 @@ GrammarInfo {
                 },
             },
             range: 1038..1112,
+        },
+        "StringElement0": GrammarRule {
+            name: Identifier("StringElement0", 558..566),
+            redirect: None,
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Combined,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: true,
+                    styles: [],
+                    railway: true,
+                },
+                captures: false,
+            },
+            body: Class {
+                term: Expression {
+                    tag: None,
+                    remark: false,
+                    body: ConcatExpression {
+                        sequence: [
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: YggdrasilText {
+                                    text: "\\",
+                                    insensitive: false,
+                                    range: 544..547,
+                                },
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: RuleReference {
+                                    name: Identifier("HexDigit", 548..556),
+                                    boxed: false,
+                                    inline: false,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            range: 0..0,
+        },
+        "StringElement1": GrammarRule {
+            name: Identifier("StringElement1", 587..594),
+            redirect: None,
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Combined,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: true,
+                    styles: [],
+                    railway: true,
+                },
+                captures: false,
+            },
+            body: Class {
+                term: Expression {
+                    tag: None,
+                    remark: false,
+                    body: ConcatExpression {
+                        sequence: [
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: YggdrasilText {
+                                    text: "\\",
+                                    insensitive: false,
+                                    range: 573..576,
+                                },
+                            },
+                            Expression {
+                                tag: None,
+                                remark: false,
+                                body: RuleReference {
+                                    name: Identifier("Escaped", 577..584),
+                                    boxed: false,
+                                    inline: false,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            range: 0..0,
+        },
+        "Boolean0": GrammarRule {
+            name: Identifier("Boolean0", 838..842),
+            redirect: None,
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Combined,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: true,
+                    styles: [],
+                    railway: true,
+                },
+                captures: false,
+            },
+            body: Class {
+                term: Expression {
+                    tag: None,
+                    remark: false,
+                    body: YggdrasilText {
+                        text: "true",
+                        insensitive: false,
+                        range: 829..835,
+                    },
+                },
+            },
+            range: 0..0,
+        },
+        "Boolean1": GrammarRule {
+            name: Identifier("Boolean1", 858..863),
+            redirect: None,
+            attributes: GrammarRuleAttributes {
+                document: "",
+                derives: RuleDerive {
+                    derives: {},
+                },
+                atomic: Combined,
+                inline: false,
+                viewer: GrammarViewer {
+                    hidden: true,
+                    styles: [],
+                    railway: true,
+                },
+                captures: false,
+            },
+            body: Class {
+                term: Expression {
+                    tag: None,
+                    remark: false,
+                    body: YggdrasilText {
+                        text: "false",
+                        insensitive: false,
+                        range: 849..856,
+                    },
+                },
+            },
+            range: 0..0,
         },
     },
     token_sets: {},
