@@ -35,21 +35,15 @@ atomic class String {
 
 atomic union StringElement {
     | '\' HexDigit #HexDigit
-    | '\' Escaped  #Escaped
-    | StringText   #StringText
+    | '\' ANY      #Escaped
+    |  /[^"'\\\\]+/   #StringText
 }
 
-text class  HexDigit {
+class  HexDigit {
     /[0-9a-fA-F]{4}/
 }
-text class Escaped {
-    ANY
-}
-text class StringText {
-    /[^"'\\\\]+/
-}
 
-atomic text class Number {
+atomic class Number {
     /[+-]?(0|[1-9][0-9]*)/
 }
 

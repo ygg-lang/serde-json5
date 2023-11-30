@@ -101,12 +101,12 @@ impl YggdrasilRule for Json5Rule {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ValueNode<'i> {
-    Object(Box<ValueNode<'i>>),
-    Array(Box<ValueNode<'i>>),
-    String(Box<ValueNode<'i>>),
-    Number(Box<ValueNode<'i>>),
-    Boolean(Box<ValueNode<'i>>),
-    Null(Box<ValueNode<'i>>),
+    Object(ObjectNode<'i>),
+    Array(ArrayNode<'i>),
+    String(StringNode<'i>),
+    Number(NumberNode<'i>),
+    Boolean(BooleanNode<'i>),
+    Null(NullNode<'i>),
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

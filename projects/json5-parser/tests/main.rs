@@ -1,5 +1,5 @@
 use json5_parser::parse;
-use nyar_error::FileCache;
+use nyar_error::SourceCache;
 
 #[test]
 fn ready() {
@@ -8,8 +8,8 @@ fn ready() {
 
 #[test]
 fn test_external() -> std::io::Result<()> {
-    let mut store = FileCache::default();
-    let id = store.load_text("{\"a\": 1, \" \n", "test.json");
+    let mut store = SourceCache::default();
+    let id = store.load_text("{\"a\": 1, \" \n}", "test.json");
     match parse(id, &mut store) {
         Ok(_) => {}
         Err(e) => e.as_report().eprint(&store)?,

@@ -31,12 +31,12 @@ pub(super) fn parse_cst(input: &str, rule: Json5Rule) -> OutputResult<Json5Rule>
 fn parse_value(state: Input) -> Output {
     state.rule(Json5Rule::Value, |s| {
         Err(s)
-            .or_else(|s| parse_value(s).and_then(|s| s.tag_node("value")))
-            .or_else(|s| parse_value(s).and_then(|s| s.tag_node("value")))
-            .or_else(|s| parse_value(s).and_then(|s| s.tag_node("value")))
-            .or_else(|s| parse_value(s).and_then(|s| s.tag_node("value")))
-            .or_else(|s| parse_value(s).and_then(|s| s.tag_node("value")))
-            .or_else(|s| parse_value(s).and_then(|s| s.tag_node("value")))
+            .or_else(|s| parse_object(s).and_then(|s| s.tag_node("object")))
+            .or_else(|s| parse_array(s).and_then(|s| s.tag_node("array")))
+            .or_else(|s| parse_string(s).and_then(|s| s.tag_node("string")))
+            .or_else(|s| parse_number(s).and_then(|s| s.tag_node("number")))
+            .or_else(|s| parse_boolean(s).and_then(|s| s.tag_node("boolean")))
+            .or_else(|s| parse_null(s).and_then(|s| s.tag_node("null")))
     })
 }
 #[inline]
@@ -95,8 +95,8 @@ fn parse_object_pair(state: Input) -> Output {
 fn parse_object_key(state: Input) -> Output {
     state.rule(Json5Rule::ObjectKey, |s| {
         Err(s)
-            .or_else(|s| parse_object_key(s).and_then(|s| s.tag_node("object_key")))
-            .or_else(|s| parse_object_key(s).and_then(|s| s.tag_node("object_key")))
+            .or_else(|s| parse_identifier(s).and_then(|s| s.tag_node("identifier")))
+            .or_else(|s| parse_string(s).and_then(|s| s.tag_node("string")))
     })
 }
 #[inline]
@@ -168,7 +168,7 @@ fn parse_string_element(state: Input) -> Output {
         Err(s)
             .or_else(|s| parse_string_element_0(s).and_then(|s| s.tag_node("string_element_0")))
             .or_else(|s| parse_string_element_1(s).and_then(|s| s.tag_node("string_element_1")))
-            .or_else(|s| parse_string_element(s).and_then(|s| s.tag_node("string_element")))
+            .or_else(|s| parse_string_text(s).and_then(|s| s.tag_node("string_text")))
     })
 }
 #[inline]
