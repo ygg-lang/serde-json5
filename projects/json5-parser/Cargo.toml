@@ -11,9 +11,17 @@ license = "MPL-2.0"
 edition = "2021"
 exclude = ["package.json", "tests/**"]
 
+
+
 [dependencies]
-yggdrasil-rt = "0.1.1"
+rctree = "0.6.0"
+indextree = "4.6.0"
+wit-bindgen = "0.22.0"
 nyar-error = { version = "0.1.16", features = ["yggdrasil-rt"] }
+
+[dependencies.yggdrasil-rt]
+version = "0.1.1"
+path = 'C:\Users\Dell\CLionProjects\yggdrasil.rs\projects\ygg-rt'
 
 [dev-dependencies]
 

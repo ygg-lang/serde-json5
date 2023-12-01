@@ -2,6 +2,7 @@ use crate::codegen::ValueNode;
 use nyar_error::{NyarError, SourceCache, SourceID};
 use yggdrasil_rt::YggdrasilNode;
 
+mod parse_tree;
 #[cfg(test)]
 mod tests;
 
