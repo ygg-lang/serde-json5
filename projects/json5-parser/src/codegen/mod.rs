@@ -36,10 +36,12 @@ pub enum Json5Rule {
     ObjectKey,
     Array,
     String,
-    StringElement,
-    HexDigit,
-    Escaped,
-    StringText,
+    DoubleStringElement,
+    SingleStringElement,
+    HexEscape,
+    AnyEscape,
+    DoubleStringText,
+    SingleStringText,
     Number,
     Boolean,
     Null,
@@ -48,8 +50,8 @@ pub enum Json5Rule {
     COMMA,
     Comment,
     WhiteSpace,
-    StringElement0,
-    StringElement1,
+    String0,
+    String1,
     Boolean0,
     Boolean1,
     /// Label for unnamed text literal
@@ -58,16 +60,7 @@ pub enum Json5Rule {
 
 impl YggdrasilRule for Json5Rule {
     fn is_ignore(&self) -> bool {
-        matches!(
-            self,
-            Self::HiddenText
-                | Self::Comment
-                | Self::WhiteSpace
-                | Self::StringElement0
-                | Self::StringElement1
-                | Self::Boolean0
-                | Self::Boolean1
-        )
+        matches!(self, Self::HiddenText | Self::Comment | Self::WhiteSpace)
     }
 
     fn get_style(&self) -> &'static str {
@@ -78,10 +71,12 @@ impl YggdrasilRule for Json5Rule {
             Self::ObjectKey => "",
             Self::Array => "",
             Self::String => "",
-            Self::StringElement => "",
-            Self::HexDigit => "",
-            Self::Escaped => "",
-            Self::StringText => "",
+            Self::DoubleStringElement => "",
+            Self::SingleStringElement => "",
+            Self::HexEscape => "",
+            Self::AnyEscape => "",
+            Self::DoubleStringText => "",
+            Self::SingleStringText => "",
             Self::Number => "",
             Self::Boolean => "",
             Self::Null => "",
@@ -90,8 +85,8 @@ impl YggdrasilRule for Json5Rule {
             Self::COMMA => "",
             Self::Comment => "",
             Self::WhiteSpace => "",
-            Self::StringElement0 => "",
-            Self::StringElement1 => "",
+            Self::String0 => "",
+            Self::String1 => "",
             Self::Boolean0 => "",
             Self::Boolean1 => "",
             _ => "",
@@ -131,29 +126,42 @@ pub struct ArrayNode<'i> {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct StringNode<'i> {
+pub enum StringNode<'i> {
+    String0(String0Node<'i>),
+    String1(String1Node<'i>),
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum DoubleStringElementNode<'i> {
+    HexEscape(HexEscapeNode<'i>),
+    AnyEscape(AnyEscapeNode<'i>),
+    DoubleStringText(DoubleStringTextNode<'i>),
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum SingleStringElementNode<'i> {
+    HexEscape(HexEscapeNode<'i>),
+    AnyEscape(AnyEscapeNode<'i>),
+    SingleStringText(SingleStringTextNode<'i>),
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct HexEscapeNode<'i> {
     pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum StringElementNode<'i> {
-    HexDigit(StringElement0Node<'i>),
-    Escaped(StringElement1Node<'i>),
-    StringText(StringTextNode<'i>),
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct HexDigitNode<'i> {
+pub struct AnyEscapeNode<'i> {
     pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct EscapedNode<'i> {
+pub struct DoubleStringTextNode<'i> {
     pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct StringTextNode<'i> {
+pub struct SingleStringTextNode<'i> {
     pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -199,12 +207,12 @@ pub struct WhiteSpaceNode<'i> {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct StringElement0Node<'i> {
+pub struct String0Node<'i> {
     pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct StringElement1Node<'i> {
+pub struct String1Node<'i> {
     pair: TokenPair<'i, Json5Rule>,
 }
 #[derive(Clone, Debug, Hash)]

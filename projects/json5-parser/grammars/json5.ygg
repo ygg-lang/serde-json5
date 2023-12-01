@@ -2,6 +2,7 @@ grammar Json5 {
     patterns: ("*.json5")
 }
 
+/// https://spec.json5.org/#values
 entry union Value {
     | Object  #Object
     | Array   #Array
@@ -28,22 +29,35 @@ class Array {
     '[' (Value (COMMA Value)* COMMA)? ']'
 }
 
-atomic class String {
-    | '"' StringElement* '"'
-    | "'" StringElement* "'"
+atomic union String {
+    | '"' DoubleStringElement* '"'
+    | "'" SingleStringElement* "'"
 }
 
-atomic union StringElement {
-    | '\' HexDigit #HexDigit
-    | '\' ANY      #Escaped
-    |  /[^"'\\\\]+/   #StringText
+union DoubleStringElement {
+    | HexEscape        #HexDigits
+    | AnyEscape        #Escaped
+    | DoubleStringText #StringText
+}
+union SingleStringElement {
+    | HexEscape         #HexDigits
+    | AnyEscape         #Escaped
+    | SingleStringText  #StringText
+}
+class HexEscape {
+    /\\u[0-9a-fA-F]{4}/
+}
+class AnyEscape {
+    /\\./
+}
+class DoubleStringText {
+    /[^"\\]+/
+}
+class SingleStringText {
+    /[^'\\]+/
 }
 
-class  HexDigit {
-    /[0-9a-fA-F]{4}/
-}
-
-atomic class Number {
+class Number {
     /[+-]?(0|[1-9][0-9]*)/
 }
 
