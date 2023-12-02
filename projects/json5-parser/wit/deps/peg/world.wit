@@ -1,0 +1,96 @@
+package peg: core;
+
+world host {
+  export types;
+  export errors;
+  export cst;
+  export visitor;
+  export listener;
+}
+
+interface types {
+  record text-range {
+    head-offset: u32,
+    tail-offset: u32,
+  }
+  resource language {
+    get-language-name: func() -> string;
+    get-glob-pattern: func() -> list<string>;
+  }
+}
+
+interface errors {
+  variant parse-error {
+    missing-tag(missing-tag),
+    fail
+  }
+
+  record missing-tag {
+    tag: string,
+  }
+}
+
+interface cst {
+  use types.{text-range, language};
+
+  flags snytax-flags {
+    /// A leaf node does not have any child nodes
+    leaf,
+      /// A ignore node does not have tag
+    ignore,
+    comment,
+    comment-inline,
+    comment-block,
+    comment-documentation,
+  }
+
+  resource syntax-rule {
+    get-flags: func() -> snytax-flags;
+    get-language: func() -> language;
+    /// Labeling of nodes
+    /// If this is a union node, tag represents branch tag
+    /// If this is a class node, tag means node tag
+    /// An empty string is equivalent to no tag
+    get-tag: func() -> string;
+    get-rule-name: func() -> string;
+    get-styles: func() -> list<string>;
+  }
+
+  resource syntax-node {
+    get-range: func() -> text-range;
+    get-rule: func() -> syntax-rule;
+    get-text: func() -> string;
+    has-parent: func() -> bool;
+    get-parent: func() -> option<syntax-node>;
+    get-ancestors: func(include-self: bool) -> syntax-iterator;
+    get-last: func() -> option<syntax-node>;
+    get-last-iterator: func(include-self: bool) -> syntax-iterator;
+    get-next: func() -> option<syntax-node>;
+    get-next-iterator: func(include-self: bool) -> syntax-iterator;
+    get-silbing-head: func() -> option<syntax-node>;
+    get-sibling-tail: func() -> option<syntax-node>;
+    get-siblings: func(reversed: bool) -> syntax-iterator;
+    has-child: func() -> bool;
+    get-child-head: func() -> option<syntax-node>;
+    get-child-tail: func() -> option<syntax-node>;
+    get-children: func(reversed: bool) -> syntax-iterator;
+    get-descendants: func(depth-first: bool, reversed: bool) -> syntax-iterator;
+  }
+
+  resource syntax-iterator {
+    last: func() -> option<syntax-node>;
+    next: func() -> option<syntax-node>;
+    move-head: func();
+    move-tail: func();
+    skip: func(count: u32);
+    reverse: func();
+  }
+}
+
+interface visitor {
+
+}
+
+interface listener {
+
+}
