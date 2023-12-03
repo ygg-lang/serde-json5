@@ -1,5 +1,5 @@
 use crate::codegen::{Json5Rule, ValueNode};
-use nyar_error::{NyarError, SourceCache, SourceID};
+use nyar_error::{SourceCache, SourceID};
 use yggdrasil_rt::{YggdrasilError, YggdrasilNode};
 
 mod parse_tree;

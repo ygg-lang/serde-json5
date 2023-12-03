@@ -39,7 +39,9 @@ interface ast {
 
   resource json-array-node {
     ctor: static func(super: syntax-node) -> result<json-array-node, parse-error>;
+    //     get-super: func() -> syntax-node;
     parse-string: static func(text: string, offset: u32) -> result<json-array-node, parse-error>;
+    get-text: func() -> string;
     item: func() -> list<json-node>;
   }
 }

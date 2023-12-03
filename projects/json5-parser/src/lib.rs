@@ -15,6 +15,7 @@ use crate::wit::Json5Host;
 pub use crate::value::parse;
 
 wit_bindgen::generate!({
+
     world: "host",
 });
 

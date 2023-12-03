@@ -32,6 +32,7 @@ interface errors {
 
 interface cst {
   use types.{text-range, language};
+  use errors.{parse-error};
 
   flags snytax-flags {
     /// A leaf node does not have any child nodes
@@ -57,7 +58,9 @@ interface cst {
   }
 
   resource syntax-node {
+    ctor: static func(text: string, offset: u32) -> result<syntax-node, parse-error>;
     get-range: func() -> text-range;
+    has-tag: func(tag: string) -> bool;
     get-rule: func() -> syntax-rule;
     get-text: func() -> string;
     has-parent: func() -> bool;
@@ -71,6 +74,7 @@ interface cst {
     get-sibling-tail: func() -> option<syntax-node>;
     get-siblings: func(reversed: bool) -> syntax-iterator;
     has-child: func() -> bool;
+    count-children: func() -> u32;
     get-child-head: func() -> option<syntax-node>;
     get-child-tail: func() -> option<syntax-node>;
     get-children: func(reversed: bool) -> syntax-iterator;

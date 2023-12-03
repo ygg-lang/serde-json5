@@ -1,17 +1,15 @@
-use crate::{exports::yggdrasil::json::ast::Guest, peg::core::cst::SyntaxNode};
-
 mod ast;
 
 pub struct Json5Host {}
 
 pub struct JsonNumberNative {
-    node: SyntaxNode,
+    node: crate::peg::core::cst::SyntaxNode,
 }
 
 pub struct JsonStringNative {
-    node: SyntaxNode,
+    node: crate::peg::core::cst::SyntaxNode,
 }
 
 pub struct JsonArrayNative {
-    node: SyntaxNode,
+    node: crate::peg::core::cst::SyntaxNode,
 }

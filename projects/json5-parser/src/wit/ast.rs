@@ -1,11 +1,5 @@
 use super::*;
-use crate::{
-    codegen::{Json5Parser, Json5Rule},
-    exports::yggdrasil::json::ast::{
-        GuestJsonArrayNode, GuestJsonNumberNode, GuestJsonStringNode, JsonArrayNode, JsonNode, ParseError,
-    },
-};
-
+use crate::exports::yggdrasil::json::ast::*;
 impl Guest for Json5Host {
     type JsonNumberNode = JsonNumberNative;
     type JsonStringNode = JsonStringNative;
@@ -21,11 +15,35 @@ impl GuestJsonArrayNode for JsonArrayNative {
         Ok(JsonArrayNode::new(Self { node: super_ }))
     }
 
+    // fn get_super(&self) -> SyntaxNode {
+    //     self.node.clone()
+    // }
     fn parse_string(text: String, offset: u32) -> Result<JsonArrayNode, ParseError> {
-        Json5Parser::parse_cst(input, Json5Rule::Value)?
+        Ok(JsonArrayNode::new(Self { node: SyntaxNode::ctor(&text, offset)? }))
+    }
+
+    fn get_text(&self) -> String {
+        self.node.get_text()
     }
 
     fn item(&self) -> Vec<JsonNode> {
-        todo!()
+        let mut children = Vec::with_capacity(self.node.count_children() as usize);
+        let mut iter = self.node.get_children(false);
+        loop {
+            match iter.next() {
+                Some(s) if s.get_rule().get_tag().eq("string") => {
+                    children.push(JsonNode::Str(JsonStringNode::new(JsonStringNative { node: s })))
+                }
+                #[cfg(debug_assertions)]
+                Some(s) => {
+                    unreachable!(
+                        "branch tag `{}` is not possible here, check whether the grammar version is correct",
+                        s.get_rule().get_tag()
+                    )
+                }
+                _ => break,
+            }
+        }
+        return children;
     }
 }
