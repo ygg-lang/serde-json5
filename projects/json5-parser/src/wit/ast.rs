@@ -1,23 +1,23 @@
 use super::*;
 use crate::exports::yggdrasil::json::ast::*;
+
+#[automatically_derived]
 impl Guest for Json5Host {
     type JsonNumberNode = JsonNumberNative;
     type JsonStringNode = JsonStringNative;
     type JsonArrayNode = JsonArrayNative;
 }
-
+#[automatically_derived]
 impl GuestJsonNumberNode for JsonNumberNative {}
-
+#[automatically_derived]
 impl GuestJsonStringNode for JsonStringNative {}
 
+#[automatically_derived]
 impl GuestJsonArrayNode for JsonArrayNative {
     fn ctor(super_: SyntaxNode) -> Result<JsonArrayNode, ParseError> {
         Ok(JsonArrayNode::new(Self { node: super_ }))
     }
 
-    // fn get_super(&self) -> SyntaxNode {
-    //     self.node.clone()
-    // }
     fn parse_string(text: String, offset: u32) -> Result<JsonArrayNode, ParseError> {
         Ok(JsonArrayNode::new(Self { node: SyntaxNode::ctor(&text, offset)? }))
     }
@@ -31,17 +31,16 @@ impl GuestJsonArrayNode for JsonArrayNative {
         let mut iter = self.node.get_children(false);
         loop {
             match iter.next() {
-                Some(s) if s.get_rule().get_tag().eq("string") => {
-                    children.push(JsonNode::Str(JsonStringNode::new(JsonStringNative { node: s })))
-                }
-                #[cfg(debug_assertions)]
-                Some(s) => {
-                    unreachable!(
+                Some(s) => match s.get_rule().get_tag() {
+                    "string" => children.push(JsonNode::Str(JsonStringNode::new(JsonStringNative { node: s }))),
+                    #[cfg(debug_assertions)]
+                    s => unreachable!(
                         "branch tag `{}` is not possible here, check whether the grammar version is correct",
                         s.get_rule().get_tag()
-                    )
-                }
-                _ => break,
+                    ),
+                    _ => break,
+                },
+                None => break,
             }
         }
         return children;

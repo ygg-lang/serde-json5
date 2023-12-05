@@ -95,133 +95,103 @@ impl YggdrasilRule for Json5Rule {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum ValueNode<'i> {
-    Object(ObjectNode<'i>),
-    Array(ArrayNode<'i>),
-    String(StringNode<'i>),
-    Number(NumberNode<'i>),
-    Boolean(BooleanNode<'i>),
-    Null(NullNode<'i>),
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ObjectNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ObjectNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct ObjectPairNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ObjectPairNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ArrayNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum ObjectKeyNode<'i> {
-    Identifier(IdentifierNode<'i>),
-    String(StringNode<'i>),
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct HexEscapeNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ArrayNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct AnyEscapeNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum StringNode<'i> {
-    String0(String0Node<'i>),
-    String1(String1Node<'i>),
+pub struct DoubleStringTextNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum DoubleStringElementNode<'i> {
-    HexEscape(HexEscapeNode<'i>),
-    AnyEscape(AnyEscapeNode<'i>),
-    DoubleStringText(DoubleStringTextNode<'i>),
+pub struct SingleStringTextNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum SingleStringElementNode<'i> {
-    HexEscape(HexEscapeNode<'i>),
-    AnyEscape(AnyEscapeNode<'i>),
-    SingleStringText(SingleStringTextNode<'i>),
+pub struct NumberNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct HexEscapeNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct NullNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct AnyEscapeNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct IdentifierNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct DoubleStringTextNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct ColonNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct SingleStringTextNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct CommaNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct NumberNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct CommentNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum BooleanNode<'i> {
-    True(Boolean0Node<'i>),
-    False(Boolean1Node<'i>),
+pub struct WhiteSpaceNodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct NullNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct String0NodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct IdentifierNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct String1NodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ColonNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct Boolean0NodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct CommaNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct CommentNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct WhiteSpaceNode<'i> {
-    pair: TokenPair<'i, Json5Rule>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct String0Node<'i> {
-    pair: TokenPair<'i, Json5Rule>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct String1Node<'i> {
-    pair: TokenPair<'i, Json5Rule>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Boolean0Node<'i> {
-    pair: TokenPair<'i, Json5Rule>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Boolean1Node<'i> {
-    pair: TokenPair<'i, Json5Rule>,
+pub struct Boolean1NodeNative {
+    node: crate::peg::core::cst::SyntaxNode,
 }
