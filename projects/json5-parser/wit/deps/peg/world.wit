@@ -58,7 +58,6 @@ interface cst {
   }
 
   resource syntax-node {
-    ctor: static func(text: string, offset: u32) -> result<syntax-node, parse-error>;
     get-range: func() -> text-range;
     has-tag: func(tag: string) -> bool;
     get-rule: func() -> syntax-rule;

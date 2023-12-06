@@ -4,19 +4,17 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/oovm/shape-rs/dev/projects/images/Trapezohedron.svg")]
 #![doc(html_favicon_url = "https://raw.githubusercontent.com/oovm/shape-rs/dev/projects/images/Trapezohedron.svg")]
 
-mod codegen;
-mod errors;
-
-mod value;
 mod wit;
 
 use crate::wit::Json5Host;
 
-pub use crate::value::parse;
-
 wit_bindgen::generate!({
-
     world: "host",
+    with: {
+        "peg:core/types": wasi_yggdrasil::exports::peg::core::types,
+        "peg:core/errors": wasi_yggdrasil::exports::peg::core::errors,
+        "peg:core/cst": wasi_yggdrasil::exports::peg::core::cst,
+    }
 });
 
 export!(Json5Host);
