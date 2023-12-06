@@ -15,7 +15,7 @@ exclude = ["package.json", "tests/**"]
 wit-bindgen = "0.22.0"
 
 [dependencies.yggdrasil-wasi]
-version = "0.0.0"
+version = "0.0.1"
 path = 'C:\Users\Dell\CLionProjects\yggdrasil.wasm\projects\ygg-wasi'
 
 [dev-dependencies]

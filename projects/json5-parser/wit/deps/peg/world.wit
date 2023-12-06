@@ -2,10 +2,12 @@ package peg: core;
 
 world host {
   export types;
-  export errors;
   export cst;
   export visitor;
   export listener;
+  use types.{parse-error};
+
+
 }
 
 interface types {
@@ -17,22 +19,35 @@ interface types {
     get-language-name: func() -> string;
     get-glob-pattern: func() -> list<string>;
   }
-}
 
-interface errors {
+  /// Anti-dead code elimination hack
+  allow-unused-parse-error: func() -> parse-error;
+
   variant parse-error {
-    missing-tag(missing-tag),
-    fail
+    missing-root,
+    invalid-rule(invalid-rule),
+    invalid-tag(invalid-tag),
+    custom(custom-error),
   }
 
-  record missing-tag {
+  record invalid-tag {
     tag: string,
+    range: text-range,
+  }
+
+  record invalid-rule {
+    tag: string,
+    range: text-range,
+  }
+
+  record custom-error {
+    message: string,
+    range: text-range,
   }
 }
 
 interface cst {
   use types.{text-range, language};
-  use errors.{parse-error};
 
   flags snytax-flags {
     /// A leaf node does not have any child nodes
@@ -48,18 +63,18 @@ interface cst {
   resource syntax-rule {
     get-flags: func() -> snytax-flags;
     get-language: func() -> language;
-    /// Labeling of nodes
-    /// If this is a union node, tag represents branch tag
-    /// If this is a class node, tag means node tag
-    /// An empty string is equivalent to no tag
-    get-tag: func() -> string;
     get-rule-name: func() -> string;
     get-styles: func() -> list<string>;
   }
 
   resource syntax-node {
     get-range: func() -> text-range;
-    has-tag: func(tag: string) -> bool;
+    /// Labeling of nodes
+    /// If this is a union node, tag represents branch tag
+    /// If this is a class node, tag means node tag
+    /// An empty string is equivalent to no tag
+    get-tag: func() -> option<string>;
+    has-tag: func(name: string) -> bool;
     get-rule: func() -> syntax-rule;
     get-text: func() -> string;
     has-parent: func() -> bool;
@@ -69,7 +84,7 @@ interface cst {
     get-last-iterator: func(include-self: bool) -> syntax-iterator;
     get-next: func() -> option<syntax-node>;
     get-next-iterator: func(include-self: bool) -> syntax-iterator;
-    get-silbing-head: func() -> option<syntax-node>;
+    get-sibling-head: func() -> option<syntax-node>;
     get-sibling-tail: func() -> option<syntax-node>;
     get-siblings: func(reversed: bool) -> syntax-iterator;
     has-child: func() -> bool;

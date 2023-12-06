@@ -6,12 +6,25 @@
 mod parse_ast;
 mod parse_cst;
 
+use crate::exports::yggdrasil::json5::ast::Json5Token;
 use core::str::FromStr;
-use std::{borrow::Cow, ops::Range, sync::OnceLock};
-use wasi_yggdrasil::{exports::peg::core::cst::SyntaxNode, state, OutputResult, Regex, State, YggdrasilParser, YggdrasilRule};
+use std::{
+    borrow::Cow,
+    cmp::Ordering,
+    hash::{Hash, Hasher},
+    ops::Range,
+    rc::Rc,
+    sync::OnceLock,
+};
+use wasi_yggdrasil::{
+    exports::peg::core::cst::{GuestSyntaxNode, SyntaxNode},
+    state,
+    syntax_node::{NativeLanguage, NativeSyntaxData},
+    Node, OutputResult, Regex, State, YggdrasilParser, YggdrasilRule,
+};
 
-type Input<'i> = Box<State<'i, Json5>>;
-type Output<'i> = Result<Box<State<'i, Json5>>, Box<State<'i, Json5>>>;
+type Input<'i> = Box<State<'i, Json5Token>>;
+type Output<'i> = Result<Box<State<'i, Json5Token>>, Box<State<'i, Json5Token>>>;
 
 #[doc = include_str!("railway.min.svg")]
 #[repr(C)]
@@ -19,7 +32,25 @@ type Output<'i> = Result<Box<State<'i, Json5>>, Box<State<'i, Json5>>>;
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Json5Host {}
 
-impl YggdrasilRule for Json5 {
+impl Hash for Json5Token {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        todo!()
+    }
+}
+
+impl Ord for Json5Token {
+    fn cmp(&self, other: &Self) -> Ordering {
+        todo!()
+    }
+}
+
+impl PartialOrd for Json5Token {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        todo!()
+    }
+}
+
+impl YggdrasilRule for Json5Token {
     fn is_ignore(&self) -> bool {
         matches!(self, Self::HiddenText | Self::Comment | Self::WhiteSpace)
     }
@@ -42,8 +73,8 @@ impl YggdrasilRule for Json5 {
             Self::Boolean => "",
             Self::Null => "",
             Self::Identifier => "",
-            Self::COLON => "",
-            Self::COMMA => "",
+            Self::Colon => "",
+            Self::Comma => "",
             Self::Comment => "",
             Self::WhiteSpace => "",
             Self::String0 => "",
@@ -54,75 +85,57 @@ impl YggdrasilRule for Json5 {
         }
     }
 }
-#[derive(Clone, Debug, Hash)]
 pub struct ObjectNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct ObjectPairNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct ArrayNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct HexEscapeNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct AnyEscapeNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct DoubleStringTextNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct SingleStringTextNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct NumberNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct NullNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct IdentifierNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct ColonNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct CommaNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct CommentNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct WhiteSpaceNative {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct String0Native {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct String1Native {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct Boolean0Native {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }
-#[derive(Clone, Debug, Hash)]
 pub struct Boolean1Native {
-    node: SyntaxNode,
+    node: Node<NativeSyntaxData>,
 }

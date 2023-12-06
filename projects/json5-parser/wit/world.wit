@@ -1,12 +1,11 @@
 package yggdrasil: json5;
 
 world host {
-    import peg: core/types;
     export ast;
 }
 
 interface ast {
-    use peg: core/errors.{parse-error};
+    use peg: core/types.{parse-error};
     use peg: core/cst.{syntax-node};
 
     /// Token type of the language
@@ -35,6 +34,7 @@ interface ast {
         %string1,
         %boolean0,
         %boolean1,
+        %hidden-text,
     }
 
     variant json5-type {
@@ -72,123 +72,111 @@ interface ast {
         %boolean(json5-boolean-node),
         %null(json5-null-node),
     }
+    parse-json5-value: func(text: string, offset: u32) -> result<json5-value-node, parse-error>;
     // AST Types
     variant json5-object-key-node {
         %identifier(json5-identifier-node),
         %string(json5-string-node),
     }
+    parse-json5-object-key: func(text: string, offset: u32) -> result<json5-object-key-node, parse-error>;
     // AST Types
     variant json5-string-node {
         %string0(json5-string0-node),
         %string1(json5-string1-node),
     }
+    parse-json5-string: func(text: string, offset: u32) -> result<json5-string-node, parse-error>;
     // AST Types
     variant json5-double-string-element-node {
         %hex-escape(json5-hex-escape-node),
         %any-escape(json5-any-escape-node),
         %double-string-text(json5-double-string-text-node),
     }
+    parse-json5-double-string-element: func(text: string, offset: u32) -> result<json5-double-string-element-node, parse-error>;
     // AST Types
     variant json5-single-string-element-node {
         %hex-escape(json5-hex-escape-node),
         %any-escape(json5-any-escape-node),
         %single-string-text(json5-single-string-text-node),
     }
+    parse-json5-single-string-element: func(text: string, offset: u32) -> result<json5-single-string-element-node, parse-error>;
     // AST Types
     variant json5-boolean-node {
         %true(json5-boolean0-node),
         %false(json5-boolean1-node),
     }
-    resource json5-object-node {
-        ctor: static func(super: syntax-node) -> result<json5-object-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-object-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-boolean: func(text: string, offset: u32) -> result<json5-boolean-node, parse-error>;
+    record json5-object-node {
+        node: syntax-node
     }
-    resource json5-object-pair-node {
-        ctor: static func(super: syntax-node) -> result<json5-object-pair-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-object-pair-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-object: func(text: string, offset: u32) -> result<json5-object-node, parse-error>;
+    record json5-object-pair-node {
+        node: syntax-node
     }
-    resource json5-array-node {
-        ctor: static func(super: syntax-node) -> result<json5-array-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-array-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-object-pair: func(text: string, offset: u32) -> result<json5-object-pair-node, parse-error>;
+    record json5-array-node {
+        node: syntax-node
     }
-    resource json5-hex-escape-node {
-        ctor: static func(super: syntax-node) -> result<json5-hex-escape-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-hex-escape-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-array: func(text: string, offset: u32) -> result<json5-array-node, parse-error>;
+    record json5-hex-escape-node {
+        node: syntax-node
     }
-    resource json5-any-escape-node {
-        ctor: static func(super: syntax-node) -> result<json5-any-escape-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-any-escape-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-hex-escape: func(text: string, offset: u32) -> result<json5-hex-escape-node, parse-error>;
+    record json5-any-escape-node {
+        node: syntax-node
     }
-    resource json5-double-string-text-node {
-        ctor: static func(super: syntax-node) -> result<json5-double-string-text-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-double-string-text-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-any-escape: func(text: string, offset: u32) -> result<json5-any-escape-node, parse-error>;
+    record json5-double-string-text-node {
+        node: syntax-node
     }
-    resource json5-single-string-text-node {
-        ctor: static func(super: syntax-node) -> result<json5-single-string-text-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-single-string-text-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-double-string-text: func(text: string, offset: u32) -> result<json5-double-string-text-node, parse-error>;
+    record json5-single-string-text-node {
+        node: syntax-node
     }
-    resource json5-number-node {
-        ctor: static func(super: syntax-node) -> result<json5-number-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-number-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-single-string-text: func(text: string, offset: u32) -> result<json5-single-string-text-node, parse-error>;
+    record json5-number-node {
+        node: syntax-node
     }
-    resource json5-null-node {
-        ctor: static func(super: syntax-node) -> result<json5-null-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-null-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-number: func(text: string, offset: u32) -> result<json5-number-node, parse-error>;
+    record json5-null-node {
+        node: syntax-node
     }
-    resource json5-identifier-node {
-        ctor: static func(super: syntax-node) -> result<json5-identifier-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-identifier-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-null: func(text: string, offset: u32) -> result<json5-null-node, parse-error>;
+    record json5-identifier-node {
+        node: syntax-node
     }
-    resource json5-colon-node {
-        ctor: static func(super: syntax-node) -> result<json5-colon-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-colon-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-identifier: func(text: string, offset: u32) -> result<json5-identifier-node, parse-error>;
+    record json5-colon-node {
+        node: syntax-node
     }
-    resource json5-comma-node {
-        ctor: static func(super: syntax-node) -> result<json5-comma-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-comma-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-colon: func(text: string, offset: u32) -> result<json5-colon-node, parse-error>;
+    record json5-comma-node {
+        node: syntax-node
     }
-    resource json5-comment-node {
-        ctor: static func(super: syntax-node) -> result<json5-comment-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-comment-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-comma: func(text: string, offset: u32) -> result<json5-comma-node, parse-error>;
+    record json5-comment-node {
+        node: syntax-node
     }
-    resource json5-white-space-node {
-        ctor: static func(super: syntax-node) -> result<json5-white-space-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-white-space-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-comment: func(text: string, offset: u32) -> result<json5-comment-node, parse-error>;
+    record json5-white-space-node {
+        node: syntax-node
     }
-    resource json5-string0-node {
-        ctor: static func(super: syntax-node) -> result<json5-string0-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-string0-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-white-space: func(text: string, offset: u32) -> result<json5-white-space-node, parse-error>;
+    record json5-string0-node {
+        node: syntax-node
     }
-    resource json5-string1-node {
-        ctor: static func(super: syntax-node) -> result<json5-string1-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-string1-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-string0: func(text: string, offset: u32) -> result<json5-string0-node, parse-error>;
+    record json5-string1-node {
+        node: syntax-node
     }
-    resource json5-boolean0-node {
-        ctor: static func(super: syntax-node) -> result<json5-boolean0-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-boolean0-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-string1: func(text: string, offset: u32) -> result<json5-string1-node, parse-error>;
+    record json5-boolean0-node {
+        node: syntax-node
     }
-    resource json5-boolean1-node {
-        ctor: static func(super: syntax-node) -> result<json5-boolean1-node, parse-error>;
-        parse-string: static func(text: string, offset: u32) -> result<json5-boolean1-node, parse-error>;
-        get-text: func() -> string;
+    parse-json5-boolean0: func(text: string, offset: u32) -> result<json5-boolean0-node, parse-error>;
+    record json5-boolean1-node {
+        node: syntax-node
     }
+    parse-json5-boolean1: func(text: string, offset: u32) -> result<json5-boolean1-node, parse-error>;
 }
 
 interface visitor {
