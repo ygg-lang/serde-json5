@@ -7,19 +7,18 @@ mod parse_ast;
 mod parse_cst;
 
 use crate::exports::yggdrasil::json5::ast::Json5Token;
-use core::str::FromStr;
-use std::{
-    borrow::Cow,
+use core::{
     cmp::Ordering,
     hash::{Hash, Hasher},
+    mem::transmute,
     ops::Range,
-    rc::Rc,
-    sync::OnceLock,
+    str::FromStr,
 };
+use std::{borrow::Cow, rc::Rc, sync::OnceLock};
 use wasi_yggdrasil::{
     exports::peg::core::cst::{GuestSyntaxNode, SyntaxNode},
     state,
-    syntax_node::{NativeLanguage, NativeSyntaxData},
+    syntax_node::{NativeLanguage, NativeSyntaxData, NativeSyntaxRule},
     Node, OutputResult, Regex, State, YggdrasilParser, YggdrasilRule,
 };
 
@@ -85,57 +84,57 @@ impl YggdrasilRule for Json5Token {
         }
     }
 }
-pub struct ObjectNative {
+pub struct ObjectNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct ObjectPairNative {
+pub struct ObjectPairNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct ArrayNative {
+pub struct ArrayNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct HexEscapeNative {
+pub struct HexEscapeNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct AnyEscapeNative {
+pub struct AnyEscapeNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct DoubleStringTextNative {
+pub struct DoubleStringTextNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct SingleStringTextNative {
+pub struct SingleStringTextNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct NumberNative {
+pub struct NumberNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct NullNative {
+pub struct NullNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct IdentifierNative {
+pub struct IdentifierNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct ColonNative {
+pub struct ColonNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct CommaNative {
+pub struct CommaNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct CommentNative {
+pub struct CommentNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct WhiteSpaceNative {
+pub struct WhiteSpaceNativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct String0Native {
+pub struct String0NativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct String1Native {
+pub struct String1NativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct Boolean0Native {
+pub struct Boolean0NativeNode {
     node: Node<NativeSyntaxData>,
 }
-pub struct Boolean1Native {
+pub struct Boolean1NativeNode {
     node: Node<NativeSyntaxData>,
 }
