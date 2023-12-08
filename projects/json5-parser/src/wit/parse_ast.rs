@@ -28,15 +28,18 @@ impl Guest for Json5Host {
 }
 #[automatically_derived]
 impl Json5ValueNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        let node = node.first_child()?;
+        let node = node.first_child().unwrap();
         let tag = match node.borrow().tag.as_ref() {
             Some(s) => unsafe { transmute::<&str, &str>(s.as_str()) },
-            None => None?,
+            None => Err(ParseError::MissingRoot)?,
         };
         Some(match tag {
             "object" => Self::Object(Json5ObjectNode::from_node(node)?),
@@ -45,104 +48,119 @@ impl Json5ValueNode {
             "number" => Self::Number(Json5NumberNode::from_node(node)?),
             "boolean" => Self::Boolean(Json5BooleanNode::from_node(node)?),
             "null" => Self::Null(Json5NullNode::from_node(node)?),
-            _ => None?,
+            _ => Err(ParseError::MissingRoot)?,
         })
     }
 }
 #[automatically_derived]
 impl Json5ObjectKeyNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        let node = node.first_child()?;
+        let node = node.first_child().unwrap();
         let tag = match node.borrow().tag.as_ref() {
             Some(s) => unsafe { transmute::<&str, &str>(s.as_str()) },
-            None => None?,
+            None => Err(ParseError::MissingRoot)?,
         };
         Some(match tag {
             "identifier" => Self::Identifier(Json5IdentifierNode::from_node(node)?),
             "string" => Self::String(Json5StringNode::from_node(node)?),
-            _ => None?,
+            _ => Err(ParseError::MissingRoot)?,
         })
     }
 }
 #[automatically_derived]
 impl Json5StringNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        let node = node.first_child()?;
+        let node = node.first_child().unwrap();
         let tag = match node.borrow().tag.as_ref() {
             Some(s) => unsafe { transmute::<&str, &str>(s.as_str()) },
-            None => None?,
+            None => Err(ParseError::MissingRoot)?,
         };
         Some(match tag {
             "string0" => Self::String0(Json5String0Node::from_node(node)?),
             "string1" => Self::String1(Json5String1Node::from_node(node)?),
-            _ => None?,
+            _ => Err(ParseError::MissingRoot)?,
         })
     }
 }
 #[automatically_derived]
 impl Json5DoubleStringElementNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        let node = node.first_child()?;
+        let node = node.first_child().unwrap();
         let tag = match node.borrow().tag.as_ref() {
             Some(s) => unsafe { transmute::<&str, &str>(s.as_str()) },
-            None => None?,
+            None => Err(ParseError::MissingRoot)?,
         };
         Some(match tag {
             "hex_escape" => Self::HexEscape(Json5HexEscapeNode::from_node(node)?),
             "any_escape" => Self::AnyEscape(Json5AnyEscapeNode::from_node(node)?),
             "double_string_text" => Self::DoubleStringText(Json5DoubleStringTextNode::from_node(node)?),
-            _ => None?,
+            _ => Err(ParseError::MissingRoot)?,
         })
     }
 }
 #[automatically_derived]
 impl Json5SingleStringElementNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        let node = node.first_child()?;
+        let node = node.first_child().unwrap();
         let tag = match node.borrow().tag.as_ref() {
             Some(s) => unsafe { transmute::<&str, &str>(s.as_str()) },
-            None => None?,
+            None => Err(ParseError::MissingRoot)?,
         };
         Some(match tag {
             "hex_escape" => Self::HexEscape(Json5HexEscapeNode::from_node(node)?),
             "any_escape" => Self::AnyEscape(Json5AnyEscapeNode::from_node(node)?),
             "single_string_text" => Self::SingleStringText(Json5SingleStringTextNode::from_node(node)?),
-            _ => None?,
+            _ => Err(ParseError::MissingRoot)?,
         })
     }
 }
 #[automatically_derived]
 impl Json5BooleanNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        let node = node.first_child()?;
+        let node = node.first_child().unwrap();
         let tag = match node.borrow().tag.as_ref() {
             Some(s) => unsafe { transmute::<&str, &str>(s.as_str()) },
-            None => None?,
+            None => Err(ParseError::MissingRoot)?,
         };
         Some(match tag {
             "true" => Self::True(Json5Boolean0Node::from_node(node)?),
             "false" => Self::False(Json5Boolean1Node::from_node(node)?),
-            _ => None?,
+            _ => Err(ParseError::MissingRoot)?,
         })
     }
 }
@@ -179,12 +197,15 @@ impl GuestJson5ObjectNode for ObjectNativeNode {
 }
 #[automatically_derived]
 impl Json5ObjectNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(ObjectNativeNode { node }))
+        Ok(Self::new(ObjectNativeNode { node }))
     }
 }
 
@@ -220,12 +241,15 @@ impl GuestJson5ObjectPairNode for ObjectPairNativeNode {
 }
 #[automatically_derived]
 impl Json5ObjectPairNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(ObjectPairNativeNode { node }))
+        Ok(Self::new(ObjectPairNativeNode { node }))
     }
 }
 
@@ -261,12 +285,15 @@ impl GuestJson5ArrayNode for ArrayNativeNode {
 }
 #[automatically_derived]
 impl Json5ArrayNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(ArrayNativeNode { node }))
+        Ok(Self::new(ArrayNativeNode { node }))
     }
 }
 
@@ -302,12 +329,15 @@ impl GuestJson5HexEscapeNode for HexEscapeNativeNode {
 }
 #[automatically_derived]
 impl Json5HexEscapeNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(HexEscapeNativeNode { node }))
+        Ok(Self::new(HexEscapeNativeNode { node }))
     }
 }
 
@@ -343,12 +373,15 @@ impl GuestJson5AnyEscapeNode for AnyEscapeNativeNode {
 }
 #[automatically_derived]
 impl Json5AnyEscapeNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(AnyEscapeNativeNode { node }))
+        Ok(Self::new(AnyEscapeNativeNode { node }))
     }
 }
 
@@ -384,12 +417,15 @@ impl GuestJson5DoubleStringTextNode for DoubleStringTextNativeNode {
 }
 #[automatically_derived]
 impl Json5DoubleStringTextNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(DoubleStringTextNativeNode { node }))
+        Ok(Self::new(DoubleStringTextNativeNode { node }))
     }
 }
 
@@ -425,12 +461,15 @@ impl GuestJson5SingleStringTextNode for SingleStringTextNativeNode {
 }
 #[automatically_derived]
 impl Json5SingleStringTextNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(SingleStringTextNativeNode { node }))
+        Ok(Self::new(SingleStringTextNativeNode { node }))
     }
 }
 
@@ -466,12 +505,15 @@ impl GuestJson5NumberNode for NumberNativeNode {
 }
 #[automatically_derived]
 impl Json5NumberNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(NumberNativeNode { node }))
+        Ok(Self::new(NumberNativeNode { node }))
     }
 }
 
@@ -507,12 +549,15 @@ impl GuestJson5NullNode for NullNativeNode {
 }
 #[automatically_derived]
 impl Json5NullNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(NullNativeNode { node }))
+        Ok(Self::new(NullNativeNode { node }))
     }
 }
 
@@ -548,12 +593,15 @@ impl GuestJson5IdentifierNode for IdentifierNativeNode {
 }
 #[automatically_derived]
 impl Json5IdentifierNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(IdentifierNativeNode { node }))
+        Ok(Self::new(IdentifierNativeNode { node }))
     }
 }
 
@@ -589,12 +637,15 @@ impl GuestJson5ColonNode for ColonNativeNode {
 }
 #[automatically_derived]
 impl Json5ColonNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(ColonNativeNode { node }))
+        Ok(Self::new(ColonNativeNode { node }))
     }
 }
 
@@ -630,12 +681,15 @@ impl GuestJson5CommaNode for CommaNativeNode {
 }
 #[automatically_derived]
 impl Json5CommaNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(CommaNativeNode { node }))
+        Ok(Self::new(CommaNativeNode { node }))
     }
 }
 
@@ -671,12 +725,15 @@ impl GuestJson5CommentNode for CommentNativeNode {
 }
 #[automatically_derived]
 impl Json5CommentNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(CommentNativeNode { node }))
+        Ok(Self::new(CommentNativeNode { node }))
     }
 }
 
@@ -712,12 +769,15 @@ impl GuestJson5WhiteSpaceNode for WhiteSpaceNativeNode {
 }
 #[automatically_derived]
 impl Json5WhiteSpaceNode {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(WhiteSpaceNativeNode { node }))
+        Ok(Self::new(WhiteSpaceNativeNode { node }))
     }
 }
 
@@ -753,12 +813,15 @@ impl GuestJson5String0Node for String0NativeNode {
 }
 #[automatically_derived]
 impl Json5String0Node {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(String0NativeNode { node }))
+        Ok(Self::new(String0NativeNode { node }))
     }
 }
 
@@ -794,12 +857,15 @@ impl GuestJson5String1Node for String1NativeNode {
 }
 #[automatically_derived]
 impl Json5String1Node {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(String1NativeNode { node }))
+        Ok(Self::new(String1NativeNode { node }))
     }
 }
 
@@ -835,12 +901,15 @@ impl GuestJson5Boolean0Node for Boolean0NativeNode {
 }
 #[automatically_derived]
 impl Json5Boolean0Node {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(Boolean0NativeNode { node }))
+        Ok(Self::new(Boolean0NativeNode { node }))
     }
 }
 
@@ -876,11 +945,14 @@ impl GuestJson5Boolean1Node for Boolean1NativeNode {
 }
 #[automatically_derived]
 impl Json5Boolean1Node {
-    pub fn from_node(node: Node<NativeSyntaxData>) -> Option<Self> {
-        #[cfg(debug_assertions)]
-        if node.get_rule().into_inner::<NativeSyntaxRule>().name == "" {
-            return None;
+    pub fn from_node(node: Node<NativeSyntaxData>) -> Result<Self, ParseError> {
+        if cfg!(debug_assertions) {
+            let expect = vec![String::from("")];
+            let current = node.get_rule().into_inner::<NativeSyntaxRule>().name.to_string();
+            if !expect.contains(&current) {
+                return Err(ParseError::InvalidRule(InvalidRule { expect, current, range: node.get_range() }));
+            }
         }
-        Some(Self::new(Boolean1NativeNode { node }))
+        Ok(Self::new(Boolean1NativeNode { node }))
     }
 }

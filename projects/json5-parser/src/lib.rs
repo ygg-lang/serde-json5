@@ -13,6 +13,7 @@ wit_bindgen::generate!({
     with: {
 
         "peg:core/types": wasi_yggdrasil::exports::peg::core::types,
+
         "peg:core/cst": wasi_yggdrasil::exports::peg::core::cst,
     }
 });

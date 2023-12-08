@@ -16,7 +16,10 @@ use core::{
 };
 use std::{borrow::Cow, rc::Rc, sync::OnceLock};
 use wasi_yggdrasil::{
-    exports::peg::core::cst::{GuestSyntaxNode, SyntaxNode},
+    exports::peg::core::{
+        cst::{GuestSyntaxNode, SyntaxNode},
+        types::InvalidRule,
+    },
     state,
     syntax_node::{NativeLanguage, NativeSyntaxData, NativeSyntaxRule},
     Node, OutputResult, Regex, State, YggdrasilParser, YggdrasilRule,

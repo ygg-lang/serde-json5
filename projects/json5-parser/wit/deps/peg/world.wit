@@ -5,9 +5,6 @@ world host {
   export cst;
   export visitor;
   export listener;
-  use types.{parse-error};
-
-
 }
 
 interface types {
@@ -31,12 +28,14 @@ interface types {
   }
 
   record invalid-tag {
-    tag: string,
+    current: string,
+    expect: list<string>,
     range: text-range,
   }
 
   record invalid-rule {
-    tag: string,
+    current: string,
+    expect: list<string>,
     range: text-range,
   }
 
