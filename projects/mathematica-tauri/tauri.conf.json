@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Mathematica",
+  "mainBinaryName": "mathematica",
+  "version": "0.1.0",
+  "identifier": "ts.mathematica.desktop",
+  "build": {
+    "beforeDevCommand": "pnpm --dir projects/mathematica-webui exec vmz dev --port 5173 .",
+    "devUrl": "http://localhost:5173",
+    "beforeBuildCommand": "pnpm --dir projects/mathematica-webui exec vmz build --release --profile static .",
+    "frontendDist": "../mathematica-webui/dist/static"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Mathematica",
+        "width": 960,
+        "height": 720,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": ["icons/icon.png", "icons/icon.ico"],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    }
+  }
+}

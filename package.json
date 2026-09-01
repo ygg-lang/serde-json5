@@ -1,11 +1,19 @@
 {
-    "private": true,
-    "scripts": {
-        "doc": "cargo doc --no-deps --all-features",
-        "test": "cargo test --release",
-        "fmt": "cargo fmt --all",
-        "p": "git push && git push --tags --prune",
-        "reset": "git reset Head~ --soft",
-        "u": "cargo upgrade --workspace"
-    }
+  "name": "mathematica.ts",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev:webui": "pnpm --filter @sxo/mathematica-webui dev",
+    "build:webui": "pnpm --filter @sxo/mathematica-webui build",
+    "build:desktop": "pnpm build:webui && cargo build -p mathematica-tauri --release",
+    "bundle:desktop": "pnpm tauri build --config projects/mathematica-tauri/tauri.conf.json",
+    "desktop": "pnpm tauri dev --config projects/mathematica-tauri/tauri.conf.json",
+    "check": "cargo check -p mathematica-tauri"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2"
+  }
 }

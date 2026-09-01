@@ -1,14 +1,22 @@
 [workspace]
 resolver = "2"
-members = ["projects/*"]
-default-members = [
-    "projects/build_by_cli",
-    "projects/build_by_dep",
-]
-exclude = [
-    "projects/.DS_Store",
-]
+members = ["projects/mathematica-tauri"]
+default-members = ["projects/mathematica-tauri"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+authors = ["Aster <192607617@qq.com>"]
+license = "Apache-2.0"
+repository = "https://github.com/nyar-vm/mathematica.ts"
+rust-version = "1.89"
+
+[workspace.dependencies]
+sxo-dialects = { path = "../sxo-framework/projects/compilers/sxo-dialects" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 [profile.release]
+opt-level = 3
 lto = true
-panic = "abort"
+codegen-units = 1

@@ -1,0 +1,798 @@
+<template>
+  <div class="app" @click="() => this.closeMenus()">
+    <header class="chrome">
+      <nav class="menu" @click="(e) => e.stopPropagation()">
+        <div class="menu__item" :class="menuOpen === 'file' ? 'is-open' : ''">
+          <button type="button" class="menu__btn" @click="() => this.toggleMenu('file')">File</button>
+          <div v-if="menuOpen === 'file'" class="menu__drop">
+            <button type="button" @click="() => this.cmdNewWindow()">New Window<span>Ctrl+N</span></button>
+            <button type="button" @click="() => this.cmdCloseWindow()">Close Window</button>
+            <button type="button" @click="() => this.cmdSave()">Save<span>Ctrl+S</span></button>
+          </div>
+        </div>
+        <div class="menu__item" :class="menuOpen === 'edit' ? 'is-open' : ''">
+          <button type="button" class="menu__btn" @click="() => this.toggleMenu('edit')">Edit</button>
+          <div v-if="menuOpen === 'edit'" class="menu__drop">
+            <button type="button" @click="() => this.cmdCopyOutput()">Copy Output</button>
+            <button type="button" @click="() => this.cmdSelectAll()">Select All Cells</button>
+          </div>
+        </div>
+        <div class="menu__item" :class="menuOpen === 'cell' ? 'is-open' : ''">
+          <button type="button" class="menu__btn" @click="() => this.toggleMenu('cell')">Cell</button>
+          <div v-if="menuOpen === 'cell'" class="menu__drop">
+            <button type="button" @click="() => this.cmdInsertInput()">Insert Input Below<span>Ctrl+Shift+N</span></button>
+            <button type="button" @click="() => this.cmdInsertText()">Insert Text Below</button>
+            <button type="button" @click="() => this.cmdInsertSection()">Insert Section Below</button>
+            <button type="button" @click="() => this.cmdDeleteCell()">Delete Cell<span>Del</span></button>
+            <button type="button" @click="() => this.cmdConvertToText()">Convert To Text</button>
+          </div>
+        </div>
+        <div class="menu__item" :class="menuOpen === 'evaluation' ? 'is-open' : ''">
+          <button type="button" class="menu__btn" @click="() => this.toggleMenu('evaluation')">Evaluation</button>
+          <div v-if="menuOpen === 'evaluation'" class="menu__drop">
+            <button type="button" @click="() => this.cmdEvaluateCell()">Evaluate Cell<span>Shift+Enter</span></button>
+            <button type="button" @click="() => this.cmdEvaluateNotebook()">Evaluate Notebook</button>
+            <button type="button" class="is-disabled" @click="() => this.cmdAbort()">Abort Evaluation</button>
+          </div>
+        </div>
+        <div class="menu__item" :class="menuOpen === 'window' ? 'is-open' : ''">
+          <button type="button" class="menu__btn" @click="() => this.toggleMenu('window')">Window</button>
+          <div v-if="menuOpen === 'window'" class="menu__drop">
+            <button type="button" @click="() => this.cmdNewWindow()">New Window<span>Ctrl+N</span></button>
+          </div>
+        </div>
+      </nav>
+      <div class="toolbar" @click="(e) => e.stopPropagation()">
+        <button type="button" class="tool" @click="() => this.cmdInsertInput()">Insert Input</button>
+        <button type="button" class="tool" @click="() => this.cmdEvaluateCell()">Evaluate</button>
+        <button type="button" class="tool" @click="() => this.cmdEvaluateNotebook()">Eval Notebook</button>
+        <button type="button" class="tool" @click="() => this.cmdCopyOutput()">Copy Output</button>
+        <button type="button" class="tool" @click="() => this.cmdNewWindow()">New Window</button>
+      </div>
+      <p v-if="toast" class="toast">{{ toast }}</p>
+    </header>
+
+    <main class="paper">
+      <div
+        v-for="cell in cells"
+        :key="cell.id"
+        :class="this.groupClass(cell)"
+        :data-cell-id="cell.id"
+      >
+        <div class="cell__main">
+          <div class="cell__label">{{ this.inLabel(cell) }}</div>
+          <div class="cell__content">
+            <button
+              v-if="cell.kind === 'section'"
+              type="button"
+              class="cell__fold"
+              @click="() => this.toggleCollapse(cell.id)"
+            >{{ cell.collapsed ? '+' : '−' }}</button>
+            <textarea
+              v-if="!(cell.kind === 'section' && cell.collapsed)"
+              :class="this.editorClass(cell)"
+              :rows="cell.rows"
+              :value="cell.source"
+              :data-cell-id="cell.id"
+              spellcheck="false"
+              @input="(e) => this.onInput(e)"
+              @keydown="(e) => this.onEditorKeyDown(e)"
+              @focus="(e) => this.onFocus(e)"
+              @click="(e) => e.stopPropagation()"
+            ></textarea>
+          </div>
+          <button
+            type="button"
+            :class="this.bracketClass(cell)"
+            :data-cell-id="cell.id"
+            :aria-label="'Select cell ' + cell.id"
+            @click="(e) => this.onBracketClick(e)"
+          ></button>
+        </div>
+
+        <div v-if="cell.kind === 'input' && (cell.busy || cell.out)" class="cell__out-row">
+          <div class="cell__label cell__label--out">{{ this.outLabel(cell) }}</div>
+          <div class="cell__content cell__out">
+            <div v-if="cell.busy" class="cell__pending">Evaluating…</div>
+            <pre v-if="!cell.busy && cell.out && cell.out.media === 'text'" class="cell__text">{{ cell.out.body }}</pre>
+            <pre v-if="!cell.busy && cell.out && cell.out.media === 'error'" class="cell__err">{{ cell.out.body }}</pre>
+            <img
+              v-if="!cell.busy && cell.out && cell.out.media === 'image'"
+              class="cell__img"
+              :src="cell.out.body"
+              alt="Out"
+            />
+            <iframe
+              v-if="!cell.busy && cell.out && (cell.out.media === 'svg' || cell.out.media === 'html')"
+              class="cell__frame"
+              sandbox=""
+              :srcdoc="this.frameDoc(cell.out)"
+              title="Out"
+            ></iframe>
+          </div>
+          <button
+            type="button"
+            :class="this.bracketClass(cell, true)"
+            :data-cell-id="cell.id"
+            aria-label="Select output"
+            @click="(e) => this.onBracketClick(e)"
+          ></button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="status">
+      <span>Kernel: Local</span>
+      <span :class="busy ? 'is-busy' : 'is-ready'">{{ busy ? 'Busy' : 'Ready' }}</span>
+      <span class="status__hint">Shift+Enter evaluate · bracket selects cell</span>
+    </footer>
+  </div>
+</template>
+
+<style>
+:root {
+  color-scheme: light;
+  --ink: #1a1a1a;
+  --muted: #6e6e6e;
+  --line: #c8c8c8;
+  --doc: #ececec;
+  --paper: #ffffff;
+  --menu: #f3f3f3;
+  --in: #1a1a1a;
+  --out: #1a5a1a;
+  --err: #a31818;
+  --sel: #3d6ea5;
+  --bracket: #8a8a8a;
+  --mono: "Source Code Pro", "IBM Plex Mono", Consolas, monospace;
+  --sans: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  --ui: "Segoe UI", "Helvetica Neue", sans-serif;
+  font-family: var(--ui);
+  font-size: 14px;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  color: var(--ink);
+  background: var(--doc);
+}
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  min-height: 100%;
+}
+.chrome {
+  background: var(--menu);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  z-index: 20;
+}
+.menu {
+  display: flex;
+  gap: 0;
+  padding: 0 0.35rem;
+  border-bottom: 1px solid var(--line);
+  background: #fafafa;
+}
+.menu__item { position: relative; }
+.menu__btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0.65rem;
+  font: inherit;
+  cursor: pointer;
+  color: var(--ink);
+}
+.menu__item.is-open .menu__btn,
+.menu__btn:hover { background: #e4e4e4; }
+.menu__drop {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 16rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  display: grid;
+  padding: 0.2rem 0;
+  z-index: 30;
+}
+.menu__drop button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0.4rem 0.75rem;
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  color: var(--ink);
+}
+.menu__drop button span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.menu__drop button:hover { background: #e8f0fa; }
+.menu__drop button.is-disabled {
+  color: var(--muted);
+  cursor: default;
+}
+.menu__drop button.is-disabled:hover { background: transparent; }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+}
+.tool {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0.25rem 0.55rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.tool:hover { background: #f0f0f0; }
+.toast {
+  margin: 0;
+  padding: 0.25rem 0.65rem 0.45rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.paper {
+  overflow: auto;
+  background: var(--paper);
+  padding: 0.75rem 0 2rem;
+  max-width: 52rem;
+  width: 100%;
+  margin: 0 auto;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  min-height: 0;
+}
+.group {
+  position: relative;
+}
+.group.is-selected .bracket {
+  background: var(--sel);
+  width: 5px;
+}
+.cell__main,
+.cell__out-row {
+  display: grid;
+  grid-template-columns: 4.75rem 1fr 14px;
+  gap: 0.35rem;
+  align-items: stretch;
+  padding: 0.15rem 0.35rem 0.15rem 0.5rem;
+}
+.cell__out-row { padding-bottom: 0.45rem; }
+.cell__label {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding-top: 0.45rem;
+  text-align: right;
+  user-select: text;
+  white-space: nowrap;
+}
+.cell__label--out { color: var(--out); }
+.group--input.is-selected .cell__label { color: var(--ink); font-weight: 600; }
+.cell__content { min-width: 0; position: relative; }
+.cell__fold {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #f7f7f7;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-bottom: 0.25rem;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+}
+.editor {
+  width: 100%;
+  resize: vertical;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  padding: 0.35rem 0.2rem;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--ink);
+  outline: none;
+}
+.editor:focus { border-bottom-color: color-mix(in srgb, var(--sel) 45%, white); }
+.editor--text,
+.editor--section {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+}
+.editor--section {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.bracket {
+  appearance: none;
+  border: 0;
+  background: var(--bracket);
+  width: 3px;
+  margin: 0.2rem 0.35rem 0.2rem auto;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 1px;
+  align-self: stretch;
+  min-height: 1.6rem;
+}
+.bracket--out { opacity: 0.55; }
+.bracket:hover { background: var(--sel); }
+.cell__out {
+  user-select: text;
+  -webkit-user-select: text;
+  padding: 0.2rem 0.2rem 0.35rem;
+}
+.cell__text, .cell__err {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.cell__err { color: var(--err); }
+.cell__img { max-width: 100%; height: auto; display: block; }
+.cell__frame {
+  width: 100%;
+  min-height: 10rem;
+  border: 0;
+  background: #fff;
+  display: block;
+}
+.cell__pending {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+.status {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border-top: 1px solid var(--line);
+  background: var(--menu);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.status .is-ready { color: #1a6b1a; }
+.status .is-busy { color: #8a5a00; font-weight: 600; }
+.status__hint { margin-left: auto; }
+</style>
+
+<script client>
+function uid() {
+  return `c${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function rowsFor(source, kind) {
+  const lines = String(source || "").split("\n").length;
+  if (kind === "section") return Math.max(1, lines);
+  if (kind === "text") return Math.max(2, lines + 1);
+  return Math.max(2, lines + 1);
+}
+
+function makeCell(kind, source = "") {
+  return {
+    id: uid(),
+    kind,
+    source,
+    rows: rowsFor(source, kind),
+    busy: false,
+    collapsed: false,
+    labelLine: null,
+    out: null,
+  };
+}
+
+function asPayload(value) {
+  if (!value || typeof value !== "object") return null;
+  const kind = value.kind ?? value.Kind;
+  const body = value.body ?? value.Body;
+  if (typeof kind === "string" && body != null) return { kind, body: String(body) };
+  return null;
+}
+
+function resolveInvoke() {
+  const g = typeof globalThis !== "undefined" ? globalThis : null;
+  const fromGlobal = g?.__TAURI__?.core?.invoke;
+  if (typeof fromGlobal === "function") return fromGlobal;
+  return null;
+}
+
+async function bridgeEval(source) {
+  const trimmed = String(source || "").trim();
+  const invoke = resolveInvoke();
+  if (typeof invoke === "function") {
+    try {
+      const raw = await invoke("eval_form", { source: trimmed });
+      return asPayload(raw) || { kind: "text", body: String(raw ?? "") };
+    } catch (err) {
+      const fromErr = asPayload(err) || asPayload(err?.payload) || asPayload(err?.data);
+      if (fromErr) return fromErr;
+      return { kind: "error", body: err?.message || String(err || "eval failed") };
+    }
+  }
+  if (!trimmed) return { kind: "error", body: "MATHEMATICA_FORM_EMPTY: empty form" };
+  if (trimmed.startsWith("SVG[")) {
+    return {
+      kind: "svg",
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120"><rect width="240" height="120" fill="#eef5ff"/><text x="20" y="64" font-family="monospace" font-size="16">SVG cell</text></svg>',
+    };
+  }
+  if (trimmed.startsWith("HTML[")) {
+    return { kind: "html", body: "<p style='font:16px sans-serif;padding:8px'>HTML cell</p>" };
+  }
+  if (trimmed.startsWith("IMG[")) {
+    return {
+      kind: "image",
+      body: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="80"><rect width="160" height="80" fill="#dff7e8"/><text x="16" y="48" font-family="monospace" font-size="14">IMG cell</text></svg>'),
+    };
+  }
+  return { kind: "text", body: trimmed };
+}
+
+async function writeClipboard(text) {
+  const value = String(text ?? "");
+  try {
+    await navigator.clipboard.writeText(value);
+    return true;
+  } catch {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = value;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+}
+
+function isEditableTarget(t) {
+  if (!t) return false;
+  const tag = String(t.tagName || "").toLowerCase();
+  return tag === "textarea" || tag === "input" || t.isContentEditable;
+}
+
+export default class IndexPage {
+  cells = [
+    makeCell("section", "Untitled Notebook"),
+    makeCell("input", "Simplify[Sin[x]^2 + Cos[x]^2]"),
+  ];
+  selectedId = this.cells[1].id;
+  selectedAll = false;
+  lineCounter = 0;
+  busy = false;
+  menuOpen = "";
+  toast = "";
+  editing = false;
+  #toastTimer = null;
+  #keysBound = false;
+
+  groupClass(cell) {
+    const sel = this.selectedAll || cell.id === this.selectedId ? " is-selected" : "";
+    return `group group--${cell.kind}${sel}`;
+  }
+
+  editorClass(cell) {
+    return `editor editor--${cell.kind}`;
+  }
+
+  bracketClass(cell, isOut = false) {
+    const sel = this.selectedAll || cell.id === this.selectedId ? " is-selected" : "";
+    return `bracket${isOut ? " bracket--out" : ""}${sel}`;
+  }
+
+  inLabel(cell) {
+    if (cell.kind === "input") {
+      if (cell.labelLine == null) return "In[·]:=";
+      return `In[${cell.labelLine}]:=`;
+    }
+    if (cell.kind === "section") return "";
+    return "";
+  }
+
+  outLabel(cell) {
+    if (cell.busy) return "Out[…]=";
+    if (cell.out && cell.out.line != null) return `Out[${cell.out.line}]=`;
+    return "Out[·]=";
+  }
+
+  frameDoc(out) {
+    if (!out) return "";
+    if (out.media === "svg") {
+      return `<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#fff}</style></head><body>${out.body}</body></html>`;
+    }
+    return `<!doctype html><html><head><meta charset="utf-8"></head><body>${out.body}</body></html>`;
+  }
+
+  showToast(msg) {
+    this.toast = msg;
+    if (this.#toastTimer) clearTimeout(this.#toastTimer);
+    this.#toastTimer = setTimeout(() => {
+      this.toast = "";
+    }, 2400);
+  }
+
+  closeMenus() {
+    if (this.menuOpen) this.menuOpen = "";
+  }
+
+  toggleMenu(name) {
+    this.menuOpen = this.menuOpen === name ? "" : name;
+  }
+
+  findIndex(id) {
+    return this.cells.findIndex((c) => c.id === id);
+  }
+
+  selectedOrFocusId() {
+    return this.selectedId || (this.cells[0] && this.cells[0].id);
+  }
+
+  onBracketClick(e) {
+    if (typeof e.stopPropagation === "function") e.stopPropagation();
+    const id = e?.currentTarget?.getAttribute?.("data-cell-id");
+    if (!id) return;
+    this.selectedId = id;
+    this.selectedAll = false;
+    this.editing = false;
+    this.closeMenus();
+  }
+
+  onFocus(e) {
+    const id = e?.currentTarget?.getAttribute?.("data-cell-id");
+    if (!id) return;
+    this.selectedId = id;
+    this.selectedAll = false;
+    this.editing = true;
+  }
+
+  onInput(e) {
+    const id = e?.currentTarget?.getAttribute?.("data-cell-id");
+    const value = e?.currentTarget?.value ?? "";
+    const i = this.findIndex(id);
+    if (i < 0) return;
+    const cell = this.cells[i];
+    this.cells[i] = {
+      ...cell,
+      source: value,
+      rows: rowsFor(value, cell.kind),
+    };
+    this.selectedId = id;
+    this.selectedAll = false;
+    this.editing = true;
+  }
+
+  async onEditorKeyDown(e) {
+    const key = e?.key || e?.code;
+    const isEnter = key === "Enter" || key === "NumpadEnter";
+    if (isEnter && e.shiftKey) {
+      if (typeof e.preventDefault === "function") e.preventDefault();
+      if (typeof e.stopPropagation === "function") e.stopPropagation();
+      const id = e?.currentTarget?.getAttribute?.("data-cell-id") || this.selectedId;
+      await this.evaluateCellById(id);
+      return;
+    }
+  }
+
+  toggleCollapse(id) {
+    const i = this.findIndex(id);
+    if (i < 0) return;
+    const cell = this.cells[i];
+    if (cell.kind !== "section") return;
+    this.cells[i] = { ...cell, collapsed: !cell.collapsed };
+  }
+
+  async evaluateCellById(id) {
+    const i = this.findIndex(id);
+    if (i < 0) return;
+    const cell = this.cells[i];
+    if (cell.kind !== "input") return;
+    this.busy = true;
+    this.cells[i] = { ...cell, busy: true };
+    const result = await bridgeEval(cell.source);
+    this.lineCounter += 1;
+    const line = this.lineCounter;
+    this.cells[i] = {
+      ...this.cells[i],
+      busy: false,
+      labelLine: line,
+      out: {
+        media: result?.kind || "text",
+        body: result?.body ?? "",
+        line,
+      },
+    };
+    this.busy = this.cells.some((c) => c.busy);
+    this.selectedId = id;
+
+    const next = this.cells[i + 1];
+    if (!next || next.kind !== "input") {
+      const blank = makeCell("input", "");
+      this.cells.splice(i + 1, 0, blank);
+      this.selectedId = blank.id;
+    }
+  }
+
+  async cmdEvaluateCell() {
+    this.closeMenus();
+    await this.evaluateCellById(this.selectedOrFocusId());
+  }
+
+  async cmdEvaluateNotebook() {
+    this.closeMenus();
+    const ids = this.cells.filter((c) => c.kind === "input").map((c) => c.id);
+    for (const id of ids) {
+      await this.evaluateCellById(id);
+    }
+  }
+
+  cmdAbort() {
+    this.closeMenus();
+    this.showToast("Abort is not connected in M0");
+  }
+
+  insertBelow(kind, source = "") {
+    const id = this.selectedOrFocusId();
+    let i = this.findIndex(id);
+    if (i < 0) i = this.cells.length - 1;
+    const cell = makeCell(kind, source);
+    this.cells.splice(i + 1, 0, cell);
+    this.selectedId = cell.id;
+    this.selectedAll = false;
+    return cell;
+  }
+
+  cmdInsertInput() {
+    this.closeMenus();
+    this.insertBelow("input", "");
+  }
+
+  cmdInsertText() {
+    this.closeMenus();
+    this.insertBelow("text", "");
+  }
+
+  cmdInsertSection() {
+    this.closeMenus();
+    this.insertBelow("section", "Section");
+  }
+
+  cmdDeleteCell() {
+    this.closeMenus();
+    if (this.cells.length <= 1) {
+      this.showToast("Cannot delete the last cell");
+      return;
+    }
+    if (this.selectedAll) {
+      const keep = makeCell("input", "");
+      this.cells = [keep];
+      this.selectedId = keep.id;
+      this.selectedAll = false;
+      return;
+    }
+    const i = this.findIndex(this.selectedId);
+    if (i < 0) return;
+    this.cells.splice(i, 1);
+    const next = this.cells[Math.min(i, this.cells.length - 1)];
+    this.selectedId = next.id;
+  }
+
+  cmdConvertToText() {
+    this.closeMenus();
+    const i = this.findIndex(this.selectedId);
+    if (i < 0) return;
+    const cell = this.cells[i];
+    this.cells[i] = {
+      ...cell,
+      kind: "text",
+      out: null,
+      labelLine: null,
+      busy: false,
+      rows: rowsFor(cell.source, "text"),
+    };
+  }
+
+  async cmdCopyOutput() {
+    this.closeMenus();
+    let cell = this.cells.find((c) => c.id === this.selectedId);
+    if (!cell || !cell.out) {
+      cell = [...this.cells].reverse().find((c) => c.kind === "input" && c.out);
+    }
+    if (!cell || !cell.out) {
+      this.showToast("No output to copy");
+      return;
+    }
+    await writeClipboard(cell.out.body);
+    this.showToast("Output copied");
+  }
+
+  cmdSelectAll() {
+    this.closeMenus();
+    this.selectedAll = true;
+  }
+
+  async cmdNewWindow() {
+    this.closeMenus();
+    const invoke = resolveInvoke();
+    if (typeof invoke !== "function") {
+      this.showToast("New Window needs desktop shell");
+      return;
+    }
+    try {
+      await invoke("new_notebook_window");
+    } catch (err) {
+      this.showToast(err?.message || String(err));
+    }
+  }
+
+  async cmdCloseWindow() {
+    this.closeMenus();
+    const invoke = resolveInvoke();
+    if (typeof invoke !== "function") {
+      this.showToast("Close Window needs desktop shell");
+      return;
+    }
+    try {
+      await invoke("close_current_window");
+    } catch (err) {
+      this.showToast(err?.message || String(err));
+    }
+  }
+
+  cmdSave() {
+    this.closeMenus();
+    this.showToast("Save is not persisted in M0");
+  }
+
+  async onMount() {
+    if (typeof window === "undefined" || this.#keysBound) return;
+    this.#keysBound = true;
+    window.addEventListener("keydown", (e) => {
+      const key = e.key || e.code;
+      const mod = e.ctrlKey || e.metaKey;
+
+      if (mod && e.shiftKey && (key === "n" || key === "N")) {
+        if (typeof e.preventDefault === "function") e.preventDefault();
+        this.cmdInsertInput();
+        return;
+      }
+      if (mod && !e.shiftKey && !e.altKey && (key === "n" || key === "N")) {
+        if (typeof e.preventDefault === "function") e.preventDefault();
+        this.cmdNewWindow();
+        return;
+      }
+      if (mod && !e.shiftKey && (key === "s" || key === "S")) {
+        if (typeof e.preventDefault === "function") e.preventDefault();
+        this.cmdSave();
+        return;
+      }
+      if ((key === "Delete" || key === "Backspace") && !isEditableTarget(e.target) && !this.editing) {
+        if (typeof e.preventDefault === "function") e.preventDefault();
+        this.cmdDeleteCell();
+      }
+    });
+  }
+}
+</script>

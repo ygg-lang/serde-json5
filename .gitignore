@@ -12,3 +12,12 @@ time-travel.*
 # Rust
 target/
 Cargo.lock
+
+# Node / pnpm
+node_modules/
+dist/
+*.tsbuildinfo
+.pnpm-store/
+
+# Tauri
+projects/mathematica-tauri/gen/

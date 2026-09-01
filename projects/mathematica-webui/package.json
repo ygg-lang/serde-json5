@@ -1,0 +1,21 @@
+{
+  "name": "@sxo/mathematica-webui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mathematica.ts WebUI — VMZ (vmz-framework) for Tauri embed",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "vmz dev --port 5173 .",
+    "build": "vmz build --release --profile static .",
+    "check": "vmz check ."
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@vmz/core": "^0.1.12"
+  },
+  "devDependencies": {
+    "@vmz/vmz": "^0.1.12",
+    "typescript": "^5.8.3"
+  }
+}
